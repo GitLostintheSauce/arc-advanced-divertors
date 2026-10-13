@@ -1,0 +1,13 @@
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Scratch output from scripts/ (re-created on each run)
+work/
+
+# Downloaded inputs: fetch from Zenodo on demand rather than committing
+geqdsk-*
+
+.DS_Store
