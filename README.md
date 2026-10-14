@@ -49,6 +49,14 @@ python scripts/run_arcv3a_baseline.py
 
 This runs the unmodified OFT example `ARCV3A_baseline_ex.ipynb` from the fork in `work/` and writes [`figures/arcv3a_baseline_equilibrium.png`](figures/arcv3a_baseline_equilibrium.png). It should finish in under a minute and converge in about 24 iterations, giving a diverted double-null equilibrium with Ip = 12 MA and q95 ≈ 3.38.
 
+To run the TokaMaker learning examples from the roadmap (fixed boundary, ITER baseline, DIII-D shape helper, ARC V3A vertical control):
+
+```bash
+python scripts/run_oft_examples.py
+```
+
+Executed notebooks and their plots go to `work/examples/` (gitignored).
+
 ## License
 
 LGPL-3.0, matching OpenFUSIONToolkit. See [LICENSE](LICENSE).
