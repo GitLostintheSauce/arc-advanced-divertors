@@ -70,7 +70,9 @@ jobs:
         run: .venv/bin/python scripts/run_oft_examples.py --oft-root oft
 
       - name: ITER TokaMaker+TORAX pulse example
-        run: .venv/bin/python scripts/run_oft_examples.py --oft-root oft AdvancedWorkflows/Pulse_Design/TokaMaker_TORAX/ITER/ITER_TokaMaker_TORAX_pulse_ex.ipynb
+        run: |
+          .venv/bin/python scripts/run_oft_examples.py --oft-root oft AdvancedWorkflows/Pulse_Design/TokaMaker_TORAX/ITER/ITER_TokaMaker_TORAX_pulse_ex.ipynb
+          .venv/bin/python scripts/check_ci_results.py iter
 
       - name: Upload outputs
         if: always()
