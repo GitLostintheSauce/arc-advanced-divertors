@@ -3,6 +3,8 @@
 A side exploration of static (fixed-time, free-boundary) SPARC equilibria. It is separate from
 the ARC V3A study and only uses public data.
 
+Findings and analysis: **[REPORT.md](REPORT.md)**.
+
 ## Starting point and data provenance (all public)
 
 - OFT example `src/examples/TokaMaker/SPARC/SPARC_public_baseline_ex.ipynb` and `sparc_public_mesh.h5`,
@@ -33,6 +35,13 @@ bit-identical on rerun. OFT 26.9, Python 3.12.13 (the ARC repo's `.venv`).
 Outputs in `results/`: `summary.md` (main table), `coil_currents.md`, `<case>.json`, `<case>.png`
 (each equilibrium vs the baseline boundary and X-points), and `all_cases_lcfs.png` (all boundaries).
 Equilibrium arrays (`*_eq.npz`, ~4 MB each) and solver logs go to `work/sparc_static/`.
+
+`analyze_scan.py` reads the results and writes `results/analysis.json` (the fitted scalings quoted in
+the report) and `results/scaling.png`:
+
+```
+.venv/bin/python sparc/static_scan/analyze_scan.py
+```
 
 ## Setup kept fixed in every case
 
