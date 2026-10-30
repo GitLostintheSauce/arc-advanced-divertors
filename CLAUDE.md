@@ -23,7 +23,8 @@ The OFT fork has two remotes: `origin` is `GitLostintheSauce/OpenFUSIONToolkit` 
 
 - Python venv at `.venv/` (Python 3.12.13). Run things with `.venv/bin/python` or activate it first.
 - Pins are in `requirements.txt` (top level) and `requirements-lock.txt` (full `pip freeze`). Regenerate the lock file whenever the environment changes.
-- `OpenFUSIONToolkit==26.9` (PyPI wheel), `torax==1.3.1`, `jax==0.9.2`, `pydantic==2.12.5`, `pydantic_core==2.41.5`, `eqdsk==0.7.0`, `tqdm==4.67.3`, `xarray==2026.2.0`. The TORAX pins match `requirements_TokaMaker_TORAX.txt` in the fork.
+- `OpenFUSIONToolkit==26.9` (PyPI wheel), `torax==1.4.0`, `jax==0.10.0`, `jaxlib==0.10.0`, `fusion_surrogates==0.4.6`, `pydantic==2.12.5`, `pydantic_core==2.41.5`, `eqdsk==0.7.0`, `tqdm==4.67.3`, `xarray==2026.2.0`. OFT 26.9's `TokaMaker.pulse_design` needs TORAX >= 1.4.0 (it imports `ConfinementMode`), so these pins intentionally differ from `requirements_TokaMaker_TORAX.txt` in OFT, which still lists `torax==1.3.1`.
+- CI (`.github/workflows/ci.yml`, macOS arm64) installs the lock file and runs the ARC V3A baseline, the SPARC static scan, the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example. Use it to test environment changes.
 - OFT examples and the ARC mesh are read from the fork at commit `8fc4afe`.
 - Only one `OFT_env`/`TokaMaker` instance can exist per Python process. For scans, run each case in its own process.
 

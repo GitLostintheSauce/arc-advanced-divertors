@@ -1,0 +1,74 @@
+# Install the pinned environment and check that the study's runs still work.
+# macOS arm64 matches the platform requirements-lock.txt was generated on.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # OFT fork commit that the examples and the ARC mesh are read from (see CLAUDE.md)
+  OFT_COMMIT: 8fc4afea835160e1ef0f6d3e2426ab586996d2f8
+
+jobs:
+  check:
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out OFT fork examples
+        uses: actions/checkout@v4
+        with:
+          repository: GitLostintheSauce/OpenFUSIONToolkit
+          ref: ${{ env.OFT_COMMIT }}
+          path: oft
+          sparse-checkout: src/examples/TokaMaker
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install pinned environment
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -r requirements-lock.txt
+          .venv/bin/pip check
+          .venv/bin/python --version
+          .venv/bin/pip list | grep -iE '^(OpenFUSIONToolkit|torax|jax|jaxlib|fusion.surrogates) '
+
+      - name: Import TokaMaker+TORAX workflow
+        run: .venv/bin/python -c "import OpenFUSIONToolkit.TokaMaker.pulse_design; print('pulse_design imports OK')"
+
+      - name: ARC V3A baseline
+        run: |
+          .venv/bin/python scripts/run_arcv3a_baseline.py --oft-root oft
+          .venv/bin/python scripts/check_ci_results.py arc
+
+      - name: SPARC static scan
+        run: |
+          .venv/bin/python sparc/static_scan/sparc_static_scan.py
+          .venv/bin/python sparc/static_scan/analyze_scan.py
+          .venv/bin/python scripts/check_ci_results.py sparc
+
+      - name: TokaMaker learning examples
+        run: .venv/bin/python scripts/run_oft_examples.py --oft-root oft
+
+      - name: ITER TokaMaker+TORAX pulse example
+        run: .venv/bin/python scripts/run_oft_examples.py --oft-root oft AdvancedWorkflows/Pulse_Design/TokaMaker_TORAX/ITER/ITER_TokaMaker_TORAX_pulse_ex.ipynb
+
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-outputs
+          path: |
+            figures/
+            sparc/static_scan/results/
+            work/**/*.png
+            work/**/*executed.ipynb
+          if-no-files-found: ignore

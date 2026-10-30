@@ -35,11 +35,14 @@ pip install -r requirements-lock.txt
 | Package | Version |
 |---|---|
 | OpenFUSIONToolkit | 26.9 (PyPI wheel) |
-| torax | 1.3.1 |
-| jax / jaxlib | 0.9.2 |
+| torax | 1.4.0 |
+| jax / jaxlib | 0.10.0 |
+| fusion_surrogates | 0.4.6 |
 | OFT fork (examples, mesh) | commit `8fc4afe` |
 
-Do not upgrade TORAX casually: the TokaMaker+TORAX workflow imports TORAX internals.
+Do not upgrade TORAX casually: the TokaMaker+TORAX workflow imports TORAX internals. OFT 26.9 needs TORAX 1.4.0 or later (`TokaMaker.pulse_design` imports `ConfinementMode`), even though OFT's `requirements_TokaMaker_TORAX.txt` still lists 1.3.1.
+
+CI (`.github/workflows/ci.yml`) installs `requirements-lock.txt` on macOS arm64 and runs the ARC V3A baseline, the SPARC static scan (checked against the committed results), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example.
 
 ## Check the install
 
