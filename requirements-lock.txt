@@ -1,7 +1,7 @@
 absl-py==2.5.1
 aiofiles==25.1.0
 annotated-types==0.8.0
-appnope==1.0.0
+appnope==1.0.0 ; sys_platform == "darwin"
 asttokens==3.0.2
 attrs==26.1.0
 beautifulsoup4==4.15.0

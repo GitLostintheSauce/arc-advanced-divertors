@@ -42,7 +42,7 @@ pip install -r requirements-lock.txt
 
 Do not upgrade TORAX casually: the TokaMaker+TORAX workflow imports TORAX internals. OFT 26.9 needs TORAX 1.4.0 or later (`TokaMaker.pulse_design` imports `ConfinementMode`), even though OFT's `requirements_TokaMaker_TORAX.txt` still lists 1.3.1.
 
-CI (`.github/workflows/ci.yml`) installs `requirements-lock.txt` on macOS arm64 and runs the ARC V3A baseline, the SPARC static scan (checked against the committed results), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example.
+The lock file installs on Linux and macOS. CI (`.github/workflows/ci.yml`) installs it on Linux x86_64 (the default platform) and on macOS arm64, and runs the ARC V3A baseline, the SPARC static scan (checked against the committed results), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example.
 
 ## Check the install
 

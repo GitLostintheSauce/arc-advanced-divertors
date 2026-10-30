@@ -1,5 +1,7 @@
 # Install the pinned environment and check that the study's runs still work.
-# macOS arm64 matches the platform requirements-lock.txt was generated on.
+# Linux x86_64 is the default platform (it is what most of OFT's own CI runs on).
+# macOS arm64 also runs, because requirements-lock.txt and the committed SPARC
+# results were generated there.
 name: CI
 
 on:
@@ -13,8 +15,17 @@ env:
 
 jobs:
   check:
-    runs-on: macos-15
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # SPARC results were generated on macOS arm64, so other platforms get a looser
+          # tolerance: the OFT wheel's solver build and floating-point paths differ.
+          - {name: "Linux x86_64", os: ubuntu-24.04, sparc_rtol: "1e-3"}
+          - {name: "macOS arm64", os: macos-15, sparc_rtol: "1e-4"}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +64,7 @@ jobs:
         run: |
           .venv/bin/python sparc/static_scan/sparc_static_scan.py
           .venv/bin/python sparc/static_scan/analyze_scan.py
-          .venv/bin/python scripts/check_ci_results.py sparc
+          .venv/bin/python scripts/check_ci_results.py sparc --rtol ${{ matrix.sparc_rtol }}
 
       - name: TokaMaker learning examples
         run: .venv/bin/python scripts/run_oft_examples.py --oft-root oft
@@ -65,7 +76,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-outputs
+          name: ci-outputs-${{ matrix.os }}
           path: |
             figures/
             sparc/static_scan/results/

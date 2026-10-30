@@ -1,5 +1,6 @@
 # Top-level pins for this study. Exact versions of every package are in
-# requirements-lock.txt (generated with `pip freeze` on Python 3.12.13, macOS arm64).
+# requirements-lock.txt (generated with `pip freeze` on Python 3.12.13, macOS arm64;
+# macOS-only packages carry a sys_platform marker so it also installs on Linux).
 #
 # OFT 26.9's TokaMaker.pulse_design imports TORAX internals that first appeared in
 # TORAX 1.4.0 (ConfinementMode), so TORAX is pinned to 1.4.0 here. This deliberately
