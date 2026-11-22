@@ -43,6 +43,14 @@ the report) and `results/scaling.png`:
 .venv/bin/python sparc/static_scan/analyze_scan.py
 ```
 
+`secondary_nulls.py` re-solves each case and finds every field null on the mesh. It uses the divertor
+metrics from OFT PR #403, fetched as a single file at a fixed commit (pins unchanged). It writes
+`results/secondary_nulls.{json,md,png}` (~3.5 min). Findings: [SECONDARY_NULLS.md](SECONDARY_NULLS.md).
+
+```
+.venv/bin/python sparc/static_scan/secondary_nulls.py
+```
+
 ## Setup kept fixed in every case
 
 Same mesh, the same F0, and P' and FF' profile *shapes* from the gEQDSK. Ip and p_axis are hard targets.
@@ -78,10 +86,11 @@ Things to know when reading the table:
   The X-point coordinates are the reliable shape measure.
 - **"Active" X-point upper or lower** flips on sub-millimetre differences in a balanced double
   null, so it is not meaningful except in `xpt_upper_up5`, where the bias is deliberate.
-- **Extra field nulls.** At lower Ip (−10 %, −20 %) or higher pressure (+20 %), TokaMaker finds an
-  extra field null at about (1.94, ±1.49) m. It sits in the outer divertor chamber, outside the plasma,
-  about 0.5 m from the main X-point. The plasma topology does not change. The table reports the X-point
-  nearest each target.
+- **Extra field nulls.** At lower Ip (−10 %, −20 %) or higher pressure (+20 %), TokaMaker reports an
+  extra field null at about (1.94, ±1.49) m. It is a saddle of the coil field about 10 cm behind the
+  first wall, next to the DV1 coil, and 51 cm from the LCFS. It exists in every case and is reported
+  only when it moves into the vessel conductor. See [SECONDARY_NULLS.md](SECONDARY_NULLS.md). The table
+  reports the X-point nearest each target.
 - **Coil currents are a static snapshot.** In a fixed-time solve the CS state is only what the
   regularisation (pull toward 0 A) prefers. CS changes here say nothing about flux swing.
 

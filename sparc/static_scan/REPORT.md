@@ -15,8 +15,11 @@ All inputs are public. How to reproduce everything is in [README.md](README.md).
 - **Elongation buys q95.** Across the shape cases, q95 rises by about 2.6 per unit of elongation at
   fixed current. Moving the X-points changes q95 more per unit of elongation than stretching the
   whole boundary does.
-- **Lower current or higher pressure creates a second magnetic null** in the outer divertor region.
-  That is directly relevant to snowflake and X-divertor ideas.
+- **The "second null" is a far-field saddle, not a plasma null.** TokaMaker reports an extra null at
+  lower current or higher pressure. It sits about 10 cm behind the first wall, next to the DV1 coil,
+  51 cm from the LCFS. It exists in every case and is only reported when it moves a few mm into the
+  vessel wall. It says nothing yet about snowflake or X-divertor options. See
+  [SECONDARY_NULLS.md](SECONDARY_NULLS.md).
 - **Coil limits could not be checked.** SPARC's coil limits are not public. "Converged" here does
   not mean "the real coils could do it".
 
@@ -151,22 +154,25 @@ total coil current (69 vs 77 MA-turns) and the squashed one more (87). These coi
 the solver pulls each one toward zero, favour a shape near or above the baseline elongation. This
 total is a crude measure dominated by the central solenoid, so treat it as a hint only.
 
-### 5. A second null appears at lower current or higher pressure
+### 5. The extra null is a far-field saddle behind the wall
 
-At −10 % and −20 % current, and at +20 % pressure, TokaMaker finds an extra field null at about
-(1.94, ±1.49) m. It sits in the outer divertor region, about 0.5 m from the main X-points and outside
-the plasma.
+At −10 % and −20 % current, and at +20 % pressure, TokaMaker reports an extra field null at about
+(1.94, ±1.49) m. A follow-up check ([SECONDARY_NULLS.md](SECONDARY_NULLS.md)) shows it is not near
+the plasma:
+- **Where it is.** About 10 cm behind the first wall, in the vacuum-vessel wall next to the DV1 coil.
+  It is 51 cm from the LCFS, 55 cm from the main X-point and 21 cm from the nearest point of the
+  primary separatrix inside the wall.
+- **Beyond the SOL.** Its flux surface is outside the wall at the outboard midplane, so no field line
+  from the plasma or the scrape-off layer reaches it.
+- **Always there.** The same saddle exists in all 14 cases, the baseline included, within about 1 cm
+  of the same place. TokaMaker only reports X-points in the plasma region and the vessel conductors,
+  not in the vacuum gap of the vessel. Lower current or higher pressure moves the null 1–3 mm outward,
+  across that boundary, so it starts being reported. The null is not created.
 
-**Why.** With less plasma current, or relatively more vertical field to balance pressure, the field
-from the coils matters more near the divertor coils. Somewhere there the plasma's poloidal field and
-the coils' field cancel, which makes a null.
-
-**What it does here.** It does not change the plasma's topology or shape in these cases.
-
-**Why it matters for this project.** Snowflake and X-divertor designs deliberately bring a second null
-close to the main X-point, or into the outer divertor leg, to spread the exhaust heat. That this
-appears for free at lower current suggests SPARC's coil set can make such a null. The next question
-is how much divertor-coil current it takes to pull it close to the X-point.
+**What it means for this project.** Snowflake and X-divertor designs need a second null within a few
+cm of the main X-point, or on the divertor leg inside the chamber. This saddle is about 50 cm away and
+behind the wall. Its presence does not show that SPARC's coils can make a snowflake. Pulling it to the
+X-point would be a large change in divertor-coil currents, and that is what next step 3 would measure.
 
 ## Caveats
 
@@ -189,8 +195,9 @@ is how much divertor-coil current it takes to pull it close to the X-point.
    fail or coil currents become unreasonable.
 2. **Check vertical stability.** Run TokaMaker's linear stability calculation
    (`compute_linear_stability`) on the elongation cases to see the growth-rate cost of the q95 gain.
-3. **Try a snowflake.** Add a second saddle target at the secondary null and walk it toward the main
-   X-point, recording divertor-coil currents.
+3. **Try a snowflake.** Add a second saddle target, starting at the DV1 saddle behind the wall
+   (about 50 cm from the main X-point), and walk it toward the main X-point, recording divertor-coil
+   currents. Use [secondary_nulls.py](secondary_nulls.py) to track where the null actually is.
 4. **Add coil limits** if a public source turns up. The script has an empty `COIL_LIMITS` slot ready.
 
 ## Acknowledgement

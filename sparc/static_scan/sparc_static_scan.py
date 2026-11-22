@@ -97,18 +97,18 @@ def fetch_inputs():
             raise RuntimeError(f'{path}: SHA-256 {got} does not match expected {sha}')
 
 
-def run_case(name):
-    """Build the baseline setup, apply one change, solve, and save outputs."""
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
+def setup_and_solve(name):
+    """Build the baseline setup, apply one change and solve.
+
+    Returns (OFT_env, TokaMaker, coil_dict, rec). Keep the OFT_env alive while using the
+    TokaMaker object. rec holds the targets and the convergence status.
+    """
     from OpenFUSIONToolkit import OFT_env
     from OpenFUSIONToolkit.TokaMaker import TokaMaker
     from OpenFUSIONToolkit.TokaMaker.meshing import load_gs_mesh
     from OpenFUSIONToolkit.TokaMaker.util import read_eqdsk
 
     mod = CASES[name]
-    os.makedirs(OUT, exist_ok=True)
     eqdsk = read_eqdsk(GEQDSK)
 
     myOFT = OFT_env(nthreads=NTHREADS)
@@ -174,6 +174,18 @@ def run_case(name):
     except ValueError as err:
         rec['converged'] = False
         rec['error'] = str(err)
+    return myOFT, mygs, coil_dict, rec
+
+
+def run_case(name):
+    """Solve one case and save its JSON, arrays and plot."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+
+    mod = CASES[name]
+    os.makedirs(OUT, exist_ok=True)
+    myOFT, mygs, coil_dict, rec = setup_and_solve(name)
 
     if rec['converged']:
         stats = mygs.get_stats()
