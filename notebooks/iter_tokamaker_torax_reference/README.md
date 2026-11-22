@@ -36,6 +36,8 @@ The run used the environment this repository pins in `requirements-lock.txt` (`t
   diagnostic tests.
 - **L-H timing is timestep-sensitive.** It is about 30 s later at `tx_dt = 0.5`.
 - **Not bit-reproducible with 4 OpenMP threads.** Pass-2 flux varied by about 0.1 % between repeat runs.
+  Over the first 8 CI runs (Linux and macOS), the L-H time varied by up to 2.6 s and flux by up to 0.14 %.
+  One macOS run had the pass-1 H-L time 10 s early, so CI checks the L-H times and flux only.
 - **No movie.** The movie cell printed an ffmpeg warning because ffmpeg was not installed.
 - OFT's P_LH plots label the Delabie curve "(used)", but TORAX used the configured Martin scaling
   (fix proposed in [OFT PR #401](https://github.com/OpenFUSIONToolkit/OpenFUSIONToolkit/pull/401)).

@@ -8,8 +8,8 @@
   sparc  Compare every sparc/static_scan/results/*.json against the committed copy in
          git HEAD, number by number, within a relative tolerance.
   iter   Read the executed OFT ITER TokaMaker+TORAX pulse example (from run_oft_examples.py)
-         and check each coupling pass's L-H/H-L times and flux consumption against the
-         reference run in notebooks/iter_tokamaker_torax_reference/README.md.
+         and check each coupling pass's L-H time and flux consumption against the reference
+         run in notebooks/iter_tokamaker_torax_reference/README.md.
 
 Usage (from the repo root, with .venv active):
     python scripts/check_ci_results.py arc
@@ -30,12 +30,14 @@ ARC_NOTEBOOK = os.path.join(REPO_ROOT, 'work', 'arcv3a_baseline', 'executed.ipyn
 SPARC_RESULTS = os.path.join('sparc', 'static_scan', 'results')
 ITER_NOTEBOOK = os.path.join(REPO_ROOT, 'work', 'examples', 'AdvancedWorkflows', 'Pulse_Design', 'TokaMaker_TORAX',
                              'ITER', 'ITER_TokaMaker_TORAX_pulse_ex_executed.ipynb')
-# Reference run, one entry per coupling pass: L-H time [s], H-L time [s], TORAX flux consumption [Wb].
+# Reference run, one entry per coupling pass: L-H time [s], TORAX flux consumption [Wb].
 # Keep in sync with notebooks/iter_tokamaker_torax_reference/README.md.
-ITER_REFERENCE = [(136.4, 499.4, 170.55), (168.7, 489.7, 165.85)]
-# Loose on purpose. The L-H time is timestep-sensitive (tx_dt = 1 s), and repeat runs with 4 OpenMP
-# threads vary by about 0.1 % in flux. Linux and macOS CI matched the reference to 0.01 %.
-ITER_TIME_ATOL = 2.0
+ITER_REFERENCE = [(136.4, 170.55), (168.7, 165.85)]
+# Loose on purpose: runs with 4 OpenMP threads are not reproducible. Over the first 8 CI runs, the L-H
+# time varied by up to 2.6 s and flux by up to 0.14 %. A real change, such as halving tx_dt, moves the
+# L-H time by about 30 s. The H-L time is printed but not checked: it falls on the ramp-down, where
+# small differences move it a lot (one CI run had it 10 s early).
+ITER_LH_ATOL = 5.0
 ITER_FLUX_RTOL = 5.0E-3
 
 
@@ -143,18 +145,17 @@ def check_iter():
         return ['ITER: expected {0} coupling passes, found {1} L-H lines, {2} loop results and {3} TokaMaker '
                 'summaries'.format(len(ITER_REFERENCE), len(transitions), len(fluxes), len(solved))]
     for ipass, ((t_lh, t_hl), flux, solve, ref) in enumerate(zip(transitions, fluxes, solved, ITER_REFERENCE)):
-        print('Pass {0}: L-H {1:.1f} s (ref {4:.1f}), H-L {2:.1f} s (ref {5:.1f}), flux {3:.2f} Wb (ref {6:.2f}), '
-              '{7}'.format(ipass + 1, t_lh, t_hl, flux, *ref, solve.split(': ', 1)[1].split(' (')[0]))
+        print('Pass {0}: L-H {1:.1f} s (ref {4:.1f}), flux {3:.2f} Wb (ref {5:.2f}), {6}; H-L {2:.1f} s '
+              '(not checked)'.format(ipass + 1, t_lh, t_hl, flux, *ref, solve.split(': ', 1)[1].split(' (')[0]))
         match = re.search(r'(\d+)/(\d+) solved', solve)
         if match.group(1) != match.group(2):
             failures.append('ITER pass {0}: {1}'.format(ipass + 1, solve))
-        for name, new, old in (('L-H time', t_lh, ref[0]), ('H-L time', t_hl, ref[1])):
-            if abs(new - old) > ITER_TIME_ATOL:
-                failures.append('ITER pass {0}: {1} {2:.1f} s is not {3:.1f} +/- {4:.1f} s'.format(
-                    ipass + 1, name, new, old, ITER_TIME_ATOL))
-        if abs(flux - ref[2]) > ITER_FLUX_RTOL * abs(ref[2]):
+        if abs(t_lh - ref[0]) > ITER_LH_ATOL:
+            failures.append('ITER pass {0}: L-H time {1:.1f} s is not {2:.1f} +/- {3:.1f} s'.format(
+                ipass + 1, t_lh, ref[0], ITER_LH_ATOL))
+        if abs(flux - ref[1]) > ITER_FLUX_RTOL * abs(ref[1]):
             failures.append('ITER pass {0}: flux consumption {1:.2f} Wb is not {2:.2f} Wb +/- {3:.1%}'.format(
-                ipass + 1, flux, ref[2], ITER_FLUX_RTOL))
+                ipass + 1, flux, ref[1], ITER_FLUX_RTOL))
     return failures
 
 
