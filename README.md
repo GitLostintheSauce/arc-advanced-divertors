@@ -16,6 +16,13 @@ The plan, timeline and code-flow rules are in the [roadmap](docs/roadmap.md).
 
 Reusable tools (for example divertor metrics or coil-limit checks that another tokamak could use) do **not** live here. They go to the [OFT fork](https://github.com/GitLostintheSauce/OpenFUSIONToolkit) on their own branch and then go upstream to OpenFUSIONToolkit as small PRs.
 
+## Results so far
+
+- [ARC V3A shape-target study](docs/arc_shape_targets/README.md): static TokaMaker equilibria
+  testing whether the coils can change triangularity, or move a secondary X-point, while holding the
+  other divertor targets. Includes a [report](docs/arc_shape_targets/REPORT.md) and an interactive
+  [picture guide](docs/arc_shape_targets/guide.html) for non-specialists.
+
 ## Data
 
 ARC V3A inputs come from the public Zenodo record [19498373](https://zenodo.org/records/19498373) (Hillesheim et al., *J. Plasma Phys.* 2026, [doi:10.1017/S0022377826101706](https://doi.org/10.1017/S0022377826101706)). Scripts download them on demand, so they are not committed.

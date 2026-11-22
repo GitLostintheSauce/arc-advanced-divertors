@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shaping a Star</title>
+<meta name="description" content="A picture guide to our ARC V3A magnet-shape experiments, for anyone age 10 and up.">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-2: #f2f0ea;
+  --ink: #1b1a17;
+  --ink-2: #55534d;
+  --ink-3: #8a877f;
+  --line: #e2dfd6;
+  --wall: #6f6c64;
+  --plasma: #f08a24;
+  --plasma-glow: #ffd27a;
+  --asked: #6250d6;
+  --case-a: #2a78d6;
+  --case-b: #eb6834;
+  --case-c: #1baf7a;
+  --pull-pos: #d94a3d;
+  --pull-neg: #2a78d6;
+  --pull-zero: #cfccc4;
+  --accent: #6250d6;
+  --good: #1a8a4a;
+  --bad: #c0392b;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #151513;
+    --surface: #1e1e1b;
+    --surface-2: #272724;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --ink-3: #8f8d85;
+    --line: #34332f;
+    --wall: #a9a69c;
+    --plasma: #ff9a3d;
+    --plasma-glow: #ffcf6e;
+    --asked: #9085e9;
+    --case-a: #3987e5;
+    --case-b: #d95926;
+    --case-c: #199e70;
+    --pull-pos: #e66767;
+    --pull-neg: #3987e5;
+    --pull-zero: #4a4944;
+    --accent: #9085e9;
+    --good: #3fbf72;
+    --bad: #e66767;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #151513; --surface: #1e1e1b; --surface-2: #272724; --ink: #f0efec; --ink-2: #c3c2b7;
+  --ink-3: #8f8d85; --line: #34332f; --wall: #a9a69c; --plasma: #ff9a3d; --plasma-glow: #ffcf6e;
+  --asked: #9085e9; --case-a: #3987e5; --case-b: #d95926; --case-c: #199e70; --pull-pos: #e66767;
+  --pull-neg: #3987e5; --pull-zero: #4a4944; --accent: #9085e9; --good: #3fbf72; --bad: #e66767;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 18px/1.6 ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 80px; }
+h1 { font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.1; margin: 0.4em 0 0.2em; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.2; margin: 0 0 0.4em; letter-spacing: -0.01em; }
+h3 { font-size: 1.15rem; margin: 1.2em 0 0.3em; }
+p { margin: 0.5em 0; }
+.lead { font-size: 1.2rem; color: var(--ink-2); max-width: 46em; }
+.chapter {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 32px); margin: 28px 0;
+}
+.kicker { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 28px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.fig { background: var(--surface-2); border-radius: 12px; padding: 8px; }
+.fig svg { display: block; width: 100%; height: auto; max-height: 78vh; margin: 0 auto; touch-action: manipulation; }
+.caption { font-size: 0.85rem; color: var(--ink-3); margin-top: 6px; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+button.chip {
+  font: inherit; font-size: 0.95rem; padding: 8px 14px; border-radius: 999px; cursor: pointer;
+  border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+  min-height: 44px;
+}
+button.chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
+button.chip:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.callout {
+  border-left: 5px solid var(--accent); background: var(--surface-2); border-radius: 0 12px 12px 0;
+  padding: 12px 16px; margin: 14px 0;
+}
+.callout.plain { border-left-color: var(--ink-3); }
+.big-number { font-size: 2.2rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.readout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.readout > div { background: var(--surface-2); border-radius: 12px; padding: 12px; }
+.readout .label { font-size: 0.85rem; color: var(--ink-2); }
+.meter { height: 18px; border-radius: 9px; background: var(--surface-2); overflow: hidden; margin: 4px 0 10px; }
+.meter > span { display: block; height: 100%; border-radius: 9px; transition: width 0.6s ease; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85rem; color: var(--ink-2); margin-top: 6px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.legend i.dash { border-top-style: dashed; }
+.legend b { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+.info { min-height: 3.4em; font-size: 0.95rem; color: var(--ink-2); }
+input[type=range] { width: 100%; accent-color: var(--accent); min-height: 44px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 12px; }
+.card { background: var(--surface-2); border-radius: 12px; padding: 14px 16px; }
+.card h3 { margin-top: 0; }
+.quiz fieldset { border: 1px solid var(--line); border-radius: 12px; margin: 14px 0; padding: 12px 16px; }
+.quiz legend { font-weight: 700; padding: 0 6px; }
+.quiz label { display: block; padding: 8px 6px; border-radius: 8px; cursor: pointer; min-height: 44px; }
+.quiz label:hover { background: var(--surface-2); }
+.quiz .feedback { min-height: 1.6em; font-weight: 600; }
+.ok { color: var(--good); } .no { color: var(--bad); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--ink-2); font-weight: 600; }
+.tablewrap { overflow-x: auto; }
+.bars { display: grid; gap: 6px; }
+.barrow { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); align-items: center; gap: 8px; font-size: 0.9rem; }
+.bartrack { position: relative; height: 22px; }
+.bartrack .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--ink-3); }
+.bartrack .bar { position: absolute; top: 3px; height: 16px; border-radius: 4px; transition: left 0.6s ease, width 0.6s ease, background 0.3s; }
+.small { font-size: 0.85rem; color: var(--ink-3); }
+.theme-toggle { float: right; }
+footer { color: var(--ink-3); font-size: 0.85rem; margin-top: 40px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <button class="chip theme-toggle" id="themeBtn" type="button" aria-label="Switch light or dark theme">Light / dark</button>
+  <div class="kicker">A picture guide · ARC V3A magnet experiments</div>
+  <h1>Shaping a star with magnets</h1>
+  <p class="lead">Scientists want to make electricity the way the Sun makes light: by squeezing tiny particles
+  together until they join. To do that on Earth you need gas that is <b>hotter than the middle of the Sun</b>,
+  and nothing can touch it. So we hold it with magnets. This guide shows two small experiments we ran on a
+  computer, and what we found out.</p>
+
+  <!-- 1 -->
+  <section class="chapter" id="ch1">
+    <div class="kicker">Chapter 1</div>
+    <h2>A star in a magnet bottle</h2>
+    <div class="grid">
+      <div>
+        <p>The machine is called <b>ARC</b>. It is shaped like a giant doughnut. Imagine cutting the doughnut in
+        half and looking at the cut side. That's what the picture shows.</p>
+        <p>The <b style="color:var(--plasma)">glowing orange D</b> is the super-hot gas, called <b>plasma</b>. The
+        <b>grey line</b> is the inside wall of the machine. The <b>coloured boxes</b> are big magnets.</p>
+        <p>Each magnet pushes and pulls on the plasma. Together they decide its <b>shape</b>. A computer program
+        called <b>TokaMaker</b> works out how hard each magnet has to pull to give the shape we ask for.</p>
+        <div class="callout"><b>Try it:</b> tap or hover over a magnet to see its name.</div>
+        <div class="info" id="coilInfo" aria-live="polite">Pick a magnet.</div>
+        <div class="legend">
+          <span><b style="background:var(--pull-pos)"></b>pulls one way</span>
+          <span><b style="background:var(--pull-neg)"></b>pulls the other way</span>
+          <span><b style="background:var(--pull-zero)"></b>barely pulling</span>
+        </div>
+      </div>
+      <div class="fig"><svg id="svgMachine" role="img" aria-label="Cross-section of the ARC machine with plasma, wall and magnets"></svg>
+        <div class="caption">Real computer result for our starting shape (case A). Darker colour = stronger pull.</div></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="chapter" id="ch2">
+    <div class="kicker">Chapter 2</div>
+    <h2>Corners, exhaust lanes and landing spots</h2>
+    <div class="grid">
+      <div>
+        <p>The plasma's edge isn't smooth all the way round. At the top and bottom it has a sharp
+        <b>corner</b>. Scientists call it an <b>X-point</b>, because the magnetic lines cross there like an X.</p>
+        <p>From each corner, invisible <b>exhaust lanes</b> run down to the wall. Heat and used-up particles
+        slide along them and land on special tough tiles. Those are the <b>landing spots</b>.</p>
+        <p>The landing spots get <i>really</i> hot. In our design there is also a second, <b>helper corner</b>
+        further out. Helper corners are part of the "advanced" designs we study: they can split the exhaust and
+        spread the heat out, a bit like spreading butter thinly so no single spot gets too much.</p>
+        <div class="btns" role="group" aria-label="Highlight parts">
+          <button class="chip" type="button" data-hl="corners" aria-pressed="false">Show the corners</button>
+          <button class="chip" type="button" data-hl="lanes" aria-pressed="false">Show the exhaust lanes</button>
+          <button class="chip" type="button" data-hl="spots" aria-pressed="false">Show the landing spots</button>
+        </div>
+        <div class="info" id="hlInfo" aria-live="polite"></div>
+      </div>
+      <div class="fig"><svg id="svgParts" role="img" aria-label="Plasma with corners, exhaust lanes and landing spots"></svg>
+        <div class="caption">Same real result as Chapter 1, zoomed in on the plasma and the wall.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="chapter" id="ch3">
+    <div class="kicker">Chapter 3 · Experiment 1</div>
+    <h2>Can we make the D less pointy?</h2>
+    <div class="grid">
+      <div>
+        <p>How pointy the D is has a name: <b>triangularity</b>. A big number means very pointy. At first we
+        asked the computer for a pointiness of <b>0.65</b>. Then we asked for <b>0.60</b>, a bit rounder. We
+        changed <i>nothing else</i>: same magnets, same plasma, and the same corners and landing spots.</p>
+        <div class="btns" role="group" aria-label="Choose the requested pointiness">
+          <button class="chip" type="button" data-ask="A_baseline" aria-pressed="true">Ask for 0.65</button>
+          <button class="chip" type="button" data-ask="B_delta060" aria-pressed="false">Ask for 0.60</button>
+        </div>
+        <div class="readout">
+          <div><div class="label">We asked for</div><div class="big-number" id="askVal">0.65</div></div>
+          <div><div class="label">The computer gave us</div><div class="big-number" id="gotVal">0.587</div></div>
+        </div>
+        <p><b>How much did it change?</b></p>
+        <div class="small">Change we asked for (0.65 → 0.60)</div>
+        <div class="meter"><span style="width:100%;background:var(--asked)"></span></div>
+        <div class="small">Change we got</div>
+        <div class="meter"><span id="gotMeter" style="width:0%;background:var(--case-b)"></span></div>
+        <div class="callout"><b>Why so little?</b> The corners are <b>pinned in place</b>, like the pegs of a
+        tent hammered into the ground. The pointiness of a D comes mostly from where its corners are. With the
+        corners pinned, the computer can only nudge the sides a little.</div>
+        <p class="small">Even the starting shape only reached 0.587, not 0.65. A pointiness of 0.65 would need
+        the corners about 4 cm further in. We pinned them at a spot that matches about 0.62.</p>
+      </div>
+      <div class="fig"><svg id="svgShape" role="img" aria-label="Requested and achieved plasma shapes"></svg>
+        <div class="legend">
+          <span><i class="dash" style="border-color:var(--asked)"></i>shape we asked for</span>
+          <span><i style="border-color:var(--plasma)"></i>shape the computer gave</span>
+          <span>📌 pinned corners</span>
+        </div>
+        <div class="caption">Both outlines are real: the dashed one is the target we gave the computer, the solid one
+        is its answer. Watch how much more the dashed line moves.</div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="chapter" id="ch4">
+    <div class="kicker">Chapter 4 · The surprise</div>
+    <h2>The magnet tug-of-war</h2>
+    <div class="grid">
+      <div>
+        <p>The plasma barely changed shape, so you might expect the magnets to barely change too. They didn't
+        behave like that! Some magnets <b>flipped</b> from pulling one way to pulling hard the other way.</p>
+        <div class="btns" role="group" aria-label="Choose which result to show">
+          <button class="chip" type="button" data-tug="A_baseline" aria-pressed="true">Magnets for 0.65</button>
+          <button class="chip" type="button" data-tug="B_delta060" aria-pressed="false">Magnets for 0.60</button>
+        </div>
+        <div class="bars" id="tugBars" aria-live="polite"></div>
+        <p class="small">Bars show total magnet current (millions of amp-turns). Right = one direction, left = the
+        other. Top and bottom magnets are the same, so each pair is shown once.</p>
+      </div>
+      <div>
+        <h3>So why didn't the plasma move?</h3>
+        <p>Think of a <b>tug-of-war</b>. If two strong teams pull hard in opposite directions, the rope stays
+        still. That's what happened: the magnet changes cancel each other out where the plasma is.</p>
+        <p>We checked by asking: "if <i>only this one</i> magnet pair changed, how much would the plasma's edge
+        be pushed?" Then we let them all change together.</p>
+        <div class="bars" id="cancelBars"></div>
+        <div class="callout"><b>What this means:</b> lots of different magnet settings give almost the
+        <i>same</i> plasma. The computer picked one of them, but it could just as well have picked another.
+        So big magnet changes here <b>don't</b> mean "rounder plasmas need much stronger magnets". To get
+        trustworthy magnet numbers we need extra rules that tell the computer which setting to prefer.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="chapter" id="ch5">
+    <div class="kicker">Chapter 5 · Experiment 2</div>
+    <h2>Moving the helper corner</h2>
+    <div class="grid">
+      <div>
+        <p>Next we went back to pointiness 0.65 and moved only the <b>helper corners</b> 5&nbsp;cm outward, about
+        the width of your palm. Everything else stayed the same, including where we <i>wanted</i> the exhaust to land.</p>
+        <label for="secSlider"><b>Move the helper corner:</b> <span id="secVal">0</span> cm outward</label>
+        <input type="range" id="secSlider" min="0" max="5" step="0.5" value="0" aria-describedby="secNote">
+        <div class="readout">
+          <div><div class="label">Outer landing spot misses its target by</div><div class="big-number" id="missVal">16 cm</div></div>
+          <div><div class="label">Plasma shape change</div><div class="big-number">≈ 0</div></div>
+        </div>
+        <div class="callout"><b>What happened:</b> the helper corner went exactly where we asked. The outer
+        exhaust lane moved with it, so its landing spot slid about 7&nbsp;cm along the wall, <b>further</b> from
+        where we wanted it. The main plasma didn't change at all, and the magnets only changed a little.</div>
+        <p>So the helper corner and the landing spot are linked. You can't choose them separately: the exhaust lands
+        wherever the lane from the helper corner happens to hit the wall.</p>
+        <p class="small" id="secNote">The computer ran only at 0 cm and 5 cm. Pictures in between are blended from
+        those two real results.</p>
+      </div>
+      <div class="fig"><svg id="svgSec" role="img" aria-label="Upper divertor: exhaust lanes and landing spots as the helper corner moves"></svg>
+        <div class="legend">
+          <span><i style="border-color:var(--case-a)"></i>exhaust lanes and edge</span>
+          <span><b style="color:var(--accent)">✕</b> helper corner, ✕ main corner</span>
+          <span>● landing spot</span>
+          <span>◆ where we wanted it to land</span>
+        </div>
+        <div class="caption">Zoomed in on the top of the machine (the bottom is a mirror image).</div></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="chapter" id="ch6">
+    <div class="kicker">Chapter 6</div>
+    <h2>What we learned</h2>
+    <div class="cards">
+      <div class="card"><h3>1. Pinned corners decide the shape</h3><p>If the corners are pinned, asking for a
+      different pointiness hardly does anything. To really change the shape, the corners have to move too.</p></div>
+      <div class="card"><h3>2. "What you ask" isn't "what you get"</h3><p>The computer balances all our wishes. When
+      two wishes disagree, the more important one wins and the other gets a bit worse.</p></div>
+      <div class="card"><h3>3. Magnets can cancel each other</h3><p>Many magnet settings make the same plasma.
+      We need better rules before we can say how hard the real magnets must work.</p></div>
+      <div class="card"><h3>4. Helper corners steer the exhaust</h3><p>Moving a helper corner moves where the exhaust
+      lands. That's exactly the kind of control advanced designs want, but it has to be planned together.</p></div>
+    </div>
+    <h3>Still a mystery (next steps)</h3>
+    <ul>
+      <li>If we move the corners <i>together</i> with the pointiness, can the magnets really change the shape?</li>
+      <li>What are the real limits of ARC's magnets? The limits in this test were far too generous to tell us.</li>
+      <li>Does everything still work when the plasma heats up and changes over time? (That's the next project, with
+      a program called TORAX.)</li>
+    </ul>
+  </section>
+
+  <!-- 7 -->
+  <section class="chapter quiz" id="ch7">
+    <div class="kicker">Chapter 7</div>
+    <h2>Quick quiz</h2>
+    <form id="quiz" onsubmit="return false">
+      <fieldset data-answer="b">
+        <legend>1. We asked for a rounder D. What happened?</legend>
+        <label><input type="radio" name="q1" value="a"> It became much rounder</label>
+        <label><input type="radio" name="q1" value="b"> It barely changed, because the corners were pinned</label>
+        <label><input type="radio" name="q1" value="c"> The computer crashed</label>
+        <div class="feedback" aria-live="polite"></div>
+      </fieldset>
+      <fieldset data-answer="c">
+        <legend>2. Some magnets flipped direction, but the plasma barely moved. Why?</legend>
+        <label><input type="radio" name="q2" value="a"> The magnets were switched off</label>
+        <label><input type="radio" name="q2" value="b"> The plasma is too heavy to move</label>
+        <label><input type="radio" name="q2" value="c"> The magnet changes cancelled out, like a tug-of-war</label>
+        <div class="feedback" aria-live="polite"></div>
+      </fieldset>
+      <fieldset data-answer="a">
+        <legend>3. We moved the helper corner outward. What moved with it?</legend>
+        <label><input type="radio" name="q3" value="a"> The outer landing spot for the exhaust</label>
+        <label><input type="radio" name="q3" value="b"> The whole plasma</label>
+        <label><input type="radio" name="q3" value="c"> Nothing at all</label>
+        <div class="feedback" aria-live="polite"></div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- 8 -->
+  <section class="chapter" id="ch8">
+    <div class="kicker">For grown-ups</div>
+    <h2>The real numbers</h2>
+    <p>Static free-boundary TokaMaker equilibria (OFT 26.9) with fixed plasma profiles. Ip = 12 MA. Each case
+    changes one input from the baseline. Full write-up: <a href="REPORT.md">REPORT.md</a>.</p>
+    <div class="tablewrap"><table id="numTable"></table></div>
+    <p class="small">"Pointiness" is triangularity δ as reported by TokaMaker's <code>get_stats</code>. Magnet
+    currents are total MA-turns. "Edge push" is the spread of coil-only vacuum flux along the boundary targets
+    (Wb/rad). The setup (targets, weights, coil bounds, regularization) comes from F. Sheehan's ARC V3A
+    shape-testing notebook; the mesh is the public OFT ARC V3A mesh. The case C pictures between 0 and 5 cm are
+    blended from the two computed results. Built by <code>scripts/arc_shape_targets/make_guide.py</code>.</p>
+  </section>
+
+  <footer>ARC V3A advanced-divertor study · interactive guide generated from simulation results.</footer>
+</main>
+
+<script>
+const D = {"limiter":[[3.415,0.0],[3.415,0.051],[3.415,0.101],[3.415,0.152],[3.415,0.202],[3.415,0.253],[3.415,0.304],[3.415,0.354],[3.415,0.405],[3.415,0.455],[3.415,0.506],[3.415,0.557],[3.415,0.607],[3.415,0.658],[3.415,0.708],[3.415,0.759],[3.415,0.809],[3.417,0.86],[3.427,0.909],[3.438,0.959],[3.448,1.008],[3.458,1.058],[3.468,1.108],[3.479,1.157],[3.489,1.207],[3.499,1.256],[3.51,1.306],[3.52,1.355],[3.53,1.405],[3.541,1.454],[3.551,1.504],[3.561,1.553],[3.571,1.603],[3.582,1.652],[3.592,1.702],[3.602,1.751],[3.613,1.801],[3.623,1.851],[3.633,1.9],[3.644,1.95],[3.654,1.999],[3.664,2.049],[3.675,2.098],[3.631,2.138],[3.587,2.178],[3.543,2.218],[3.499,2.258],[3.455,2.298],[3.48,2.346],[3.53,2.371],[3.581,2.396],[3.631,2.421],[3.681,2.446],[3.731,2.471],[3.769,2.505],[3.795,2.548],[3.821,2.591],[3.847,2.634],[3.872,2.677],[3.898,2.72],[3.924,2.763],[3.95,2.806],[3.975,2.849],[4.001,2.892],[4.027,2.935],[4.053,2.978],[4.078,3.02],[4.104,3.063],[4.13,3.106],[4.156,3.149],[4.182,3.192],[4.207,3.235],[4.233,3.278],[4.259,3.321],[4.285,3.364],[4.31,3.407],[4.336,3.45],[4.363,3.492],[4.39,3.534],[4.418,3.576],[4.446,3.617],[4.474,3.659],[4.502,3.7],[4.53,3.742],[4.558,3.783],[4.586,3.825],[4.614,3.866],[4.642,3.908],[4.67,3.95],[4.698,3.991],[4.725,4.033],[4.75,4.069],[4.799,4.095],[4.849,4.095],[4.904,4.095],[4.959,4.095],[5.014,4.095],[5.069,4.095],[5.123,4.095],[5.178,4.095],[5.233,4.095],[5.284,4.095],[5.315,4.064],[5.315,4.02],[5.315,3.97],[5.315,3.919],[5.315,3.869],[5.315,3.819],[5.315,3.744],[5.315,3.694],[5.315,3.643],[5.315,3.593],[5.315,3.543],[5.315,3.493],[5.315,3.443],[5.315,3.392],[5.315,3.342],[5.268,3.364],[5.222,3.385],[5.175,3.406],[5.128,3.428],[5.082,3.449],[5.035,3.471],[4.988,3.492],[4.942,3.514],[4.914,3.471],[4.886,3.428],[4.858,3.384],[4.83,3.341],[4.802,3.298],[4.774,3.255],[4.746,3.212],[4.718,3.169],[4.69,3.126],[4.662,3.083],[4.634,3.04],[4.606,2.997],[4.578,2.954],[4.55,2.911],[4.522,2.868],[4.494,2.825],[4.466,2.782],[4.438,2.739],[4.41,2.695],[4.382,2.652],[4.354,2.609],[4.326,2.566],[4.298,2.523],[4.27,2.48],[4.243,2.437],[4.215,2.394],[4.187,2.351],[4.225,2.318],[4.263,2.285],[4.301,2.252],[4.339,2.219],[4.377,2.186],[4.415,2.154],[4.453,2.121],[4.491,2.088],[4.529,2.055],[4.567,2.022],[4.605,1.989],[4.643,1.956],[4.681,1.923],[4.719,1.89],[4.757,1.857],[4.792,1.821],[4.825,1.783],[4.858,1.745],[4.89,1.707],[4.923,1.668],[4.955,1.63],[4.988,1.592],[5.021,1.553],[5.053,1.515],[5.086,1.477],[5.119,1.439],[5.151,1.4],[5.184,1.362],[5.216,1.324],[5.248,1.285],[5.28,1.246],[5.311,1.206],[5.343,1.167],[5.374,1.128],[5.406,1.089],[5.437,1.049],[5.468,1.01],[5.5,0.971],[5.531,0.931],[5.563,0.892],[5.594,0.853],[5.626,0.814],[5.657,0.774],[5.682,0.731],[5.691,0.702],[5.705,0.66],[5.721,0.612],[5.737,0.564],[5.753,0.517],[5.769,0.469],[5.785,0.421],[5.801,0.373],[5.815,0.331],[5.825,0.271],[5.825,0.226],[5.825,0.176],[5.825,0.126],[5.825,0.075],[5.825,0.025],[5.825,-0.025],[5.825,-0.075],[5.825,-0.126],[5.825,-0.176],[5.825,-0.226],[5.825,-0.271],[5.815,-0.331],[5.801,-0.373],[5.785,-0.421],[5.769,-0.469],[5.753,-0.517],[5.737,-0.564],[5.721,-0.612],[5.705,-0.66],[5.691,-0.702],[5.682,-0.731],[5.657,-0.774],[5.626,-0.814],[5.594,-0.853],[5.563,-0.892],[5.531,-0.931],[5.5,-0.971],[5.468,-1.01],[5.437,-1.049],[5.406,-1.089],[5.374,-1.128],[5.343,-1.167],[5.311,-1.206],[5.28,-1.246],[5.248,-1.285],[5.216,-1.324],[5.184,-1.362],[5.151,-1.4],[5.119,-1.439],[5.086,-1.477],[5.053,-1.515],[5.021,-1.553],[4.988,-1.592],[4.955,-1.63],[4.923,-1.668],[4.89,-1.707],[4.858,-1.745],[4.825,-1.783],[4.792,-1.821],[4.757,-1.857],[4.719,-1.89],[4.681,-1.923],[4.643,-1.956],[4.605,-1.989],[4.567,-2.022],[4.529,-2.055],[4.491,-2.088],[4.453,-2.121],[4.415,-2.154],[4.377,-2.186],[4.339,-2.219],[4.301,-2.252],[4.263,-2.285],[4.225,-2.318],[4.187,-2.351],[4.215,-2.394],[4.243,-2.437],[4.27,-2.48],[4.298,-2.523],[4.326,-2.566],[4.354,-2.609],[4.382,-2.652],[4.41,-2.695],[4.438,-2.739],[4.466,-2.782],[4.494,-2.825],[4.522,-2.868],[4.55,-2.911],[4.578,-2.954],[4.606,-2.997],[4.634,-3.04],[4.662,-3.083],[4.69,-3.126],[4.718,-3.169],[4.746,-3.212],[4.774,-3.255],[4.802,-3.298],[4.83,-3.341],[4.858,-3.384],[4.886,-3.428],[4.914,-3.471],[4.942,-3.514],[4.988,-3.492],[5.035,-3.471],[5.082,-3.449],[5.128,-3.428],[5.175,-3.406],[5.222,-3.385],[5.268,-3.364],[5.315,-3.342],[5.315,-3.392],[5.315,-3.443],[5.315,-3.493],[5.315,-3.543],[5.315,-3.593],[5.315,-3.643],[5.315,-3.694],[5.315,-3.744],[5.315,-3.794],[5.315,-3.844],[5.315,-3.894],[5.315,-3.944],[5.315,-3.995],[5.315,-4.045],[5.315,-4.095],[5.26,-4.095],[5.205,-4.095],[5.151,-4.095],[5.096,-4.095],[5.069,-4.095],[5.014,-4.095],[4.959,-4.095],[4.904,-4.095],[4.849,-4.095],[4.799,-4.095],[4.75,-4.069],[4.725,-4.033],[4.698,-3.991],[4.67,-3.95],[4.642,-3.908],[4.614,-3.866],[4.586,-3.825],[4.558,-3.783],[4.53,-3.742],[4.502,-3.7],[4.474,-3.659],[4.446,-3.617],[4.418,-3.576],[4.39,-3.534],[4.363,-3.492],[4.336,-3.45],[4.31,-3.407],[4.285,-3.364],[4.259,-3.321],[4.233,-3.278],[4.207,-3.235],[4.182,-3.192],[4.156,-3.149],[4.13,-3.106],[4.104,-3.063],[4.078,-3.02],[4.053,-2.978],[4.027,-2.935],[4.001,-2.892],[3.975,-2.849],[3.95,-2.806],[3.924,-2.763],[3.898,-2.72],[3.872,-2.677],[3.847,-2.634],[3.821,-2.591],[3.795,-2.548],[3.769,-2.505],[3.731,-2.471],[3.681,-2.446],[3.631,-2.421],[3.581,-2.396],[3.53,-2.371],[3.48,-2.346],[3.455,-2.298],[3.499,-2.258],[3.543,-2.218],[3.587,-2.178],[3.631,-2.138],[3.675,-2.098],[3.664,-2.049],[3.654,-1.999],[3.644,-1.95],[3.633,-1.9],[3.623,-1.851],[3.613,-1.801],[3.602,-1.751],[3.592,-1.702],[3.582,-1.652],[3.571,-1.603],[3.561,-1.553],[3.551,-1.504],[3.541,-1.454],[3.53,-1.405],[3.52,-1.355],[3.51,-1.306],[3.499,-1.256],[3.489,-1.207],[3.479,-1.157],[3.468,-1.108],[3.458,-1.058],[3.448,-1.008],[3.438,-0.959],[3.427,-0.909],[3.417,-0.86],[3.416,-0.829],[3.415,-0.784],[3.415,-0.734],[3.415,-0.683],[3.415,-0.632],[3.415,-0.582],[3.415,-0.531],[3.415,-0.481],[3.415,-0.43],[3.415,-0.379],[3.415,-0.329],[3.415,-0.278],[3.415,-0.228],[3.415,-0.177],[3.415,-0.126],[3.415,-0.076],[3.415,-0.025]],"coils":{"CS1U":[0.72,0.05,1.49,1.45],"CS1L":[0.72,-1.45,1.49,-0.05],"CS2U":[0.72,1.55,1.49,2.25],"CS2L":[0.72,-2.25,1.49,-1.55],"CS3U":[0.72,2.35,1.49,3.05],"CS3L":[0.72,-3.05,1.49,-2.35],"PF1U":[1.1,3.6,1.7,4.2],"PF1L":[1.1,-4.2,1.7,-3.6],"PF2U":[1.55,4.4,2.25,5.1],"PF2L":[1.55,-5.1,2.25,-4.4],"PF3U":[5.95,2.7,6.45,3.2],"PF3L":[5.95,-3.2,6.45,-2.7],"PF4U":[5.95,2.0,6.45,2.5],"PF4L":[5.95,-2.5,6.45,-2.0],"PF5U":[6.75,1.4,7.15,1.8],"PF5L":[6.75,-1.8,7.15,-1.4]},"requested":{"0.55":[[5.781,-0.109],[5.781,-0.052],[5.781,0.006],[5.781,0.064],[5.779,0.122],[5.771,0.179],[5.763,0.236],[5.754,0.293],[5.743,0.35],[5.727,0.405],[5.711,0.461],[5.695,0.516],[5.675,0.57],[5.653,0.624],[5.63,0.677],[5.608,0.73],[5.58,0.781],[5.552,0.831],[5.524,0.882],[5.496,0.932],[5.463,0.98],[5.431,1.028],[5.398,1.076],[5.365,1.122],[5.328,1.167],[5.292,1.212],[5.256,1.257],[5.218,1.301],[5.179,1.343],[5.139,1.386],[5.1,1.428],[5.059,1.468],[5.016,1.508],[4.974,1.547],[4.932,1.587],[4.888,1.624],[4.843,1.661],[4.799,1.698],[4.754,1.734],[4.707,1.768],[4.66,1.801],[4.613,1.835],[4.565,1.867],[4.515,1.897],[4.466,1.926],[4.416,1.956],[4.365,1.982],[4.312,2.005],[4.259,2.028],[4.206,2.051],[4.15,2.065],[4.093,2.076],[4.036,2.086],[3.98,2.097],[3.924,2.082],[3.876,2.051],[3.834,2.012],[3.8,1.966],[3.769,1.917],[3.742,1.866],[3.716,1.814],[3.696,1.76],[3.676,1.706],[3.657,1.652],[3.641,1.596],[3.625,1.54],[3.609,1.485],[3.597,1.428],[3.584,1.372],[3.572,1.316],[3.56,1.259],[3.551,1.202],[3.541,1.145],[3.532,1.088],[3.523,1.031],[3.516,0.974],[3.509,0.916],[3.502,0.859],[3.495,0.801],[3.49,0.744],[3.485,0.686],[3.48,0.629],[3.475,0.571],[3.471,0.514],[3.469,0.456],[3.466,0.398],[3.463,0.34],[3.46,0.283],[3.459,0.225],[3.459,0.167],[3.459,0.109],[3.459,0.052],[3.459,-0.006],[3.459,-0.064],[3.459,-0.122],[3.459,-0.18],[3.459,-0.237],[3.461,-0.295],[3.463,-0.353],[3.466,-0.41],[3.469,-0.468],[3.472,-0.526],[3.476,-0.584],[3.481,-0.641],[3.486,-0.699],[3.491,-0.756],[3.496,-0.814],[3.503,-0.871],[3.51,-0.928],[3.518,-0.986],[3.525,-1.043],[3.534,-1.1],[3.543,-1.157],[3.553,-1.214],[3.562,-1.271],[3.575,-1.328],[3.587,-1.384],[3.599,-1.441],[3.613,-1.497],[3.628,-1.552],[3.644,-1.608],[3.66,-1.663],[3.68,-1.718],[3.701,-1.772],[3.722,-1.825],[3.748,-1.877],[3.774,-1.928],[3.807,-1.976],[3.841,-2.022],[3.886,-2.059],[3.936,-2.086],[3.992,-2.095],[4.049,-2.084],[4.105,-2.073],[4.162,-2.063],[4.217,-2.046],[4.27,-2.023],[4.323,-2.0],[4.376,-1.977],[4.427,-1.949],[4.476,-1.92],[4.526,-1.89],[4.576,-1.861],[4.623,-1.828],[4.67,-1.794],[4.717,-1.76],[4.764,-1.727],[4.808,-1.69],[4.853,-1.653],[4.898,-1.616],[4.941,-1.579],[4.983,-1.539],[5.025,-1.499],[5.068,-1.46],[5.108,-1.419],[5.148,-1.377],[5.187,-1.334],[5.226,-1.292],[5.264,-1.248],[5.3,-1.203],[5.336,-1.158],[5.372,-1.113],[5.405,-1.065],[5.438,-1.018],[5.47,-0.97],[5.502,-0.922],[5.53,-0.871],[5.558,-0.821],[5.586,-0.77],[5.612,-0.719],[5.635,-0.665],[5.657,-0.612],[5.68,-0.559],[5.699,-0.504],[5.715,-0.449],[5.73,-0.393],[5.746,-0.338],[5.756,-0.281],[5.765,-0.224],[5.773,-0.167]],"0.60":[[5.785,0.0],[5.781,0.058],[5.776,0.115],[5.772,0.173],[5.765,0.23],[5.752,0.287],[5.739,0.343],[5.727,0.4],[5.709,0.455],[5.689,0.509],[5.669,0.563],[5.649,0.617],[5.623,0.669],[5.596,0.721],[5.57,0.772],[5.543,0.823],[5.511,0.872],[5.48,0.92],[5.449,0.969],[5.415,1.016],[5.38,1.062],[5.345,1.108],[5.31,1.154],[5.272,1.197],[5.233,1.241],[5.195,1.284],[5.156,1.327],[5.115,1.367],[5.074,1.408],[5.033,1.449],[4.991,1.488],[4.947,1.527],[4.904,1.565],[4.861,1.603],[4.816,1.639],[4.77,1.675],[4.725,1.711],[4.679,1.746],[4.631,1.779],[4.584,1.812],[4.536,1.845],[4.487,1.876],[4.437,1.905],[4.387,1.934],[4.337,1.964],[4.285,1.988],[4.232,2.012],[4.179,2.035],[4.126,2.057],[4.069,2.068],[4.012,2.079],[3.956,2.09],[3.9,2.09],[3.847,2.068],[3.806,2.028],[3.772,1.982],[3.742,1.932],[3.716,1.88],[3.694,1.827],[3.673,1.773],[3.655,1.718],[3.639,1.662],[3.622,1.607],[3.608,1.551],[3.596,1.494],[3.583,1.438],[3.571,1.381],[3.561,1.325],[3.551,1.267],[3.542,1.21],[3.532,1.153],[3.524,1.096],[3.517,1.039],[3.51,0.981],[3.503,0.924],[3.497,0.866],[3.492,0.809],[3.487,0.751],[3.482,0.693],[3.478,0.636],[3.473,0.578],[3.47,0.52],[3.468,0.462],[3.465,0.405],[3.462,0.347],[3.46,0.289],[3.46,0.231],[3.46,0.173],[3.46,0.116],[3.459,0.058],[3.459,-0.0],[3.459,-0.058],[3.459,-0.116],[3.459,-0.174],[3.459,-0.232],[3.46,-0.289],[3.462,-0.347],[3.465,-0.405],[3.467,-0.463],[3.47,-0.521],[3.474,-0.578],[3.478,-0.636],[3.482,-0.694],[3.487,-0.751],[3.491,-0.809],[3.497,-0.866],[3.504,-0.924],[3.51,-0.982],[3.516,-1.039],[3.525,-1.096],[3.533,-1.153],[3.542,-1.211],[3.55,-1.268],[3.561,-1.325],[3.572,-1.382],[3.583,-1.438],[3.595,-1.495],[3.609,-1.551],[3.623,-1.607],[3.637,-1.663],[3.655,-1.718],[3.674,-1.773],[3.693,-1.827],[3.717,-1.88],[3.741,-1.933],[3.772,-1.982],[3.804,-2.029],[3.848,-2.068],[3.899,-2.091],[3.956,-2.09],[4.012,-2.079],[4.069,-2.068],[4.126,-2.057],[4.179,-2.035],[4.232,-2.012],[4.285,-1.988],[4.337,-1.964],[4.387,-1.934],[4.437,-1.905],[4.487,-1.876],[4.536,-1.845],[4.584,-1.812],[4.631,-1.779],[4.679,-1.746],[4.725,-1.711],[4.77,-1.675],[4.816,-1.639],[4.861,-1.603],[4.904,-1.565],[4.947,-1.527],[4.991,-1.488],[5.033,-1.449],[5.074,-1.408],[5.115,-1.367],[5.156,-1.327],[5.195,-1.284],[5.233,-1.241],[5.272,-1.197],[5.31,-1.154],[5.345,-1.108],[5.38,-1.062],[5.415,-1.016],[5.449,-0.969],[5.48,-0.92],[5.511,-0.872],[5.543,-0.823],[5.57,-0.772],[5.596,-0.721],[5.623,-0.669],[5.649,-0.617],[5.669,-0.563],[5.689,-0.509],[5.709,-0.455],[5.727,-0.4],[5.739,-0.343],[5.752,-0.287],[5.765,-0.23],[5.772,-0.173],[5.776,-0.115],[5.781,-0.058]],"0.65":[[5.785,0.0],[5.78,0.058],[5.775,0.115],[5.771,0.173],[5.763,0.231],[5.749,0.287],[5.736,0.343],[5.722,0.399],[5.704,0.454],[5.682,0.508],[5.66,0.562],[5.639,0.615],[5.612,0.667],[5.584,0.717],[5.556,0.768],[5.528,0.819],[5.495,0.866],[5.462,0.914],[5.429,0.962],[5.395,1.008],[5.358,1.053],[5.322,1.098],[5.285,1.143],[5.246,1.186],[5.207,1.229],[5.167,1.271],[5.128,1.313],[5.086,1.353],[5.044,1.393],[5.002,1.433],[4.959,1.472],[4.915,1.51],[4.871,1.547],[4.827,1.585],[4.782,1.621],[4.736,1.656],[4.69,1.692],[4.644,1.727],[4.596,1.76],[4.548,1.793],[4.5,1.825],[4.452,1.858],[4.402,1.887],[4.352,1.916],[4.302,1.945],[4.251,1.973],[4.199,1.997],[4.146,2.021],[4.093,2.044],[4.038,2.061],[3.981,2.072],[3.924,2.084],[3.868,2.096],[3.813,2.079],[3.772,2.039],[3.738,1.993],[3.711,1.941],[3.687,1.889],[3.667,1.834],[3.648,1.78],[3.632,1.724],[3.617,1.668],[3.603,1.612],[3.59,1.556],[3.579,1.499],[3.568,1.442],[3.557,1.385],[3.548,1.328],[3.54,1.27],[3.531,1.213],[3.523,1.156],[3.516,1.098],[3.51,1.041],[3.504,0.983],[3.498,0.925],[3.492,0.868],[3.487,0.81],[3.483,0.752],[3.479,0.694],[3.475,0.637],[3.471,0.579],[3.469,0.521],[3.466,0.463],[3.464,0.405],[3.461,0.347],[3.459,0.29],[3.459,0.232],[3.459,0.174],[3.459,0.116],[3.459,0.058],[3.459,-0.0],[3.459,-0.058],[3.459,-0.116],[3.459,-0.174],[3.459,-0.232],[3.459,-0.29],[3.461,-0.348],[3.464,-0.406],[3.466,-0.463],[3.468,-0.521],[3.471,-0.579],[3.475,-0.637],[3.479,-0.695],[3.483,-0.753],[3.487,-0.81],[3.492,-0.868],[3.498,-0.926],[3.503,-0.983],[3.509,-1.041],[3.516,-1.099],[3.524,-1.156],[3.531,-1.213],[3.539,-1.271],[3.548,-1.328],[3.558,-1.385],[3.568,-1.442],[3.578,-1.499],[3.591,-1.556],[3.603,-1.612],[3.616,-1.669],[3.632,-1.724],[3.648,-1.78],[3.666,-1.835],[3.688,-1.889],[3.71,-1.942],[3.738,-1.993],[3.771,-2.04],[3.813,-2.08],[3.868,-2.096],[3.924,-2.084],[3.981,-2.072],[4.038,-2.061],[4.093,-2.044],[4.146,-2.021],[4.199,-1.997],[4.251,-1.973],[4.302,-1.945],[4.352,-1.916],[4.402,-1.887],[4.452,-1.858],[4.5,-1.825],[4.548,-1.793],[4.596,-1.76],[4.644,-1.727],[4.69,-1.692],[4.736,-1.656],[4.782,-1.621],[4.827,-1.585],[4.871,-1.547],[4.915,-1.51],[4.959,-1.472],[5.002,-1.433],[5.044,-1.393],[5.086,-1.353],[5.128,-1.313],[5.167,-1.271],[5.207,-1.229],[5.246,-1.186],[5.285,-1.143],[5.322,-1.098],[5.358,-1.053],[5.395,-1.008],[5.429,-0.962],[5.462,-0.914],[5.495,-0.866],[5.528,-0.819],[5.556,-0.768],[5.584,-0.717],[5.612,-0.667],[5.639,-0.615],[5.66,-0.562],[5.682,-0.508],[5.704,-0.454],[5.722,-0.399],[5.736,-0.343],[5.749,-0.287],[5.763,-0.231],[5.771,-0.173],[5.775,-0.115],[5.78,-0.058]],"0.70":[[5.785,-0.0],[5.78,0.058],[5.775,0.116],[5.769,0.173],[5.762,0.231],[5.747,0.287],[5.732,0.343],[5.717,0.399],[5.698,0.454],[5.674,0.507],[5.651,0.56],[5.628,0.613],[5.6,0.664],[5.57,0.714],[5.541,0.764],[5.511,0.814],[5.477,0.861],[5.443,0.907],[5.408,0.954],[5.373,1.0],[5.335,1.044],[5.297,1.088],[5.259,1.132],[5.22,1.175],[5.179,1.216],[5.138,1.257],[5.098,1.298],[5.055,1.338],[5.012,1.377],[4.969,1.416],[4.926,1.455],[4.881,1.492],[4.837,1.529],[4.792,1.565],[4.746,1.602],[4.7,1.637],[4.653,1.671],[4.607,1.706],[4.56,1.74],[4.512,1.772],[4.463,1.805],[4.415,1.837],[4.366,1.867],[4.316,1.897],[4.266,1.926],[4.216,1.956],[4.163,1.981],[4.111,2.005],[4.058,2.03],[4.005,2.052],[3.948,2.065],[3.892,2.077],[3.835,2.09],[3.78,2.086],[3.736,2.051],[3.703,2.004],[3.679,1.951],[3.656,1.898],[3.639,1.842],[3.623,1.787],[3.608,1.731],[3.596,1.674],[3.583,1.617],[3.572,1.561],[3.562,1.503],[3.552,1.446],[3.543,1.389],[3.535,1.331],[3.528,1.274],[3.521,1.216],[3.514,1.159],[3.507,1.101],[3.502,1.043],[3.497,0.985],[3.492,0.927],[3.486,0.87],[3.483,0.812],[3.479,0.754],[3.476,0.696],[3.472,0.638],[3.469,0.58],[3.467,0.522],[3.465,0.464],[3.462,0.406],[3.46,0.348],[3.459,0.29],[3.458,0.232],[3.458,0.174],[3.458,0.116],[3.458,0.058],[3.458,-0.0],[3.458,-0.058],[3.458,-0.116],[3.458,-0.174],[3.458,-0.232],[3.459,-0.29],[3.46,-0.348],[3.462,-0.406],[3.464,-0.464],[3.466,-0.522],[3.469,-0.58],[3.472,-0.638],[3.476,-0.696],[3.479,-0.754],[3.482,-0.812],[3.487,-0.87],[3.492,-0.928],[3.497,-0.986],[3.501,-1.043],[3.508,-1.101],[3.514,-1.159],[3.521,-1.216],[3.527,-1.274],[3.535,-1.332],[3.544,-1.389],[3.552,-1.446],[3.561,-1.504],[3.572,-1.561],[3.583,-1.618],[3.594,-1.675],[3.609,-1.731],[3.623,-1.787],[3.639,-1.843],[3.657,-1.898],[3.678,-1.952],[3.704,-2.004],[3.736,-2.052],[3.78,-2.087],[3.835,-2.09],[3.892,-2.077],[3.948,-2.065],[4.005,-2.052],[4.058,-2.03],[4.111,-2.005],[4.163,-1.981],[4.216,-1.956],[4.266,-1.926],[4.316,-1.897],[4.366,-1.867],[4.415,-1.837],[4.463,-1.805],[4.512,-1.772],[4.56,-1.74],[4.607,-1.706],[4.653,-1.671],[4.7,-1.637],[4.746,-1.602],[4.792,-1.565],[4.837,-1.529],[4.881,-1.492],[4.926,-1.455],[4.969,-1.416],[5.012,-1.377],[5.055,-1.338],[5.098,-1.298],[5.138,-1.257],[5.179,-1.216],[5.22,-1.175],[5.259,-1.132],[5.297,-1.088],[5.335,-1.044],[5.373,-1.0],[5.408,-0.954],[5.443,-0.907],[5.477,-0.861],[5.511,-0.814],[5.541,-0.764],[5.57,-0.714],[5.6,-0.664],[5.628,-0.613],[5.651,-0.56],[5.674,-0.507],[5.698,-0.454],[5.717,-0.399],[5.732,-0.343],[5.747,-0.287],[5.762,-0.231],[5.769,-0.173],[5.775,-0.116],[5.78,-0.058]]},"cases":{"A_baseline":{"lcfs":[[5.806,0.001],[5.805,0.059],[5.8,0.117],[5.793,0.174],[5.782,0.232],[5.769,0.288],[5.753,0.344],[5.735,0.399],[5.714,0.453],[5.691,0.507],[5.666,0.559],[5.64,0.611],[5.611,0.661],[5.581,0.711],[5.55,0.76],[5.517,0.808],[5.483,0.855],[5.449,0.902],[5.413,0.948],[5.376,0.993],[5.339,1.037],[5.301,1.081],[5.263,1.125],[5.224,1.168],[5.184,1.21],[5.144,1.253],[5.104,1.294],[5.063,1.336],[5.022,1.377],[4.981,1.418],[4.939,1.458],[4.897,1.498],[4.855,1.538],[4.812,1.578],[4.769,1.617],[4.725,1.655],[4.682,1.693],[4.637,1.731],[4.593,1.768],[4.547,1.804],[4.502,1.84],[4.455,1.875],[4.408,1.909],[4.361,1.943],[4.313,1.976],[4.264,2.007],[4.215,2.038],[4.165,2.067],[4.114,2.096],[4.063,2.123],[4.011,2.148],[3.957,2.171],[3.901,2.174],[3.872,2.124],[3.849,2.071],[3.826,2.017],[3.804,1.963],[3.783,1.909],[3.763,1.855],[3.743,1.8],[3.723,1.746],[3.705,1.691],[3.687,1.635],[3.669,1.58],[3.653,1.524],[3.636,1.469],[3.621,1.413],[3.607,1.356],[3.593,1.3],[3.579,1.243],[3.567,1.187],[3.555,1.13],[3.544,1.073],[3.533,1.016],[3.523,0.959],[3.514,0.901],[3.505,0.844],[3.497,0.786],[3.49,0.729],[3.483,0.671],[3.477,0.613],[3.471,0.555],[3.466,0.497],[3.462,0.44],[3.458,0.382],[3.454,0.324],[3.452,0.266],[3.449,0.208],[3.448,0.149],[3.446,0.091],[3.446,0.033],[3.446,-0.025],[3.446,-0.083],[3.447,-0.141],[3.449,-0.199],[3.451,-0.257],[3.454,-0.315],[3.457,-0.373],[3.461,-0.431],[3.465,-0.489],[3.47,-0.547],[3.476,-0.605],[3.482,-0.662],[3.489,-0.72],[3.496,-0.778],[3.504,-0.835],[3.512,-0.893],[3.522,-0.95],[3.531,-1.007],[3.542,-1.065],[3.553,-1.122],[3.565,-1.178],[3.578,-1.235],[3.591,-1.292],[3.605,-1.348],[3.619,-1.404],[3.635,-1.46],[3.651,-1.516],[3.668,-1.572],[3.685,-1.627],[3.704,-1.682],[3.723,-1.737],[3.742,-1.792],[3.763,-1.846],[3.785,-1.9],[3.808,-1.953],[3.832,-2.006],[3.859,-2.058],[3.893,-2.105],[3.942,-2.133],[4.0,-2.127],[4.055,-2.109],[4.108,-2.085],[4.159,-2.058],[4.21,-2.03],[4.26,-2.0],[4.309,-1.97],[4.358,-1.938],[4.405,-1.905],[4.453,-1.871],[4.499,-1.836],[4.545,-1.8],[4.591,-1.764],[4.636,-1.727],[4.68,-1.69],[4.724,-1.652],[4.768,-1.614],[4.811,-1.575],[4.853,-1.535],[4.896,-1.496],[4.938,-1.456],[4.98,-1.415],[5.021,-1.375],[5.062,-1.334],[5.103,-1.292],[5.144,-1.251],[5.183,-1.208],[5.223,-1.166],[5.262,-1.123],[5.301,-1.079],[5.339,-1.035],[5.376,-0.991],[5.413,-0.946],[5.448,-0.9],[5.483,-0.854],[5.517,-0.806],[5.55,-0.758],[5.581,-0.709],[5.611,-0.66],[5.639,-0.609],[5.666,-0.557],[5.691,-0.505],[5.714,-0.452],[5.735,-0.397],[5.753,-0.342],[5.769,-0.286],[5.782,-0.23],[5.793,-0.173],[5.8,-0.115],[5.805,-0.057]],"legs":[[[3.449,0.191],[3.45,0.221],[3.451,0.251],[3.452,0.281],[3.454,0.311],[3.455,0.341],[3.457,0.371],[3.459,0.401],[3.461,0.431],[3.463,0.461],[3.465,0.491],[3.468,0.52],[3.471,0.55],[3.473,0.58],[3.476,0.61],[3.479,0.64],[3.483,0.67],[3.486,0.7],[3.49,0.729],[3.493,0.759],[3.497,0.789],[3.502,0.818],[3.506,0.848],[3.51,0.878],[3.515,0.907],[3.519,0.937],[3.524,0.967],[3.529,0.996],[3.535,1.026],[3.54,1.055],[3.546,1.085],[3.552,1.114],[3.557,1.144],[3.563,1.173],[3.57,1.202],[3.576,1.232],[3.583,1.261],[3.59,1.29],[3.597,1.319],[3.604,1.348],[3.611,1.377],[3.619,1.406],[3.628,1.435],[3.636,1.464],[3.645,1.493],[3.652,1.522],[3.659,1.551],[3.669,1.579],[3.677,1.608],[3.687,1.636],[3.697,1.664],[3.704,1.693],[3.714,1.722],[3.723,1.75],[3.733,1.779],[3.743,1.807],[3.756,1.834],[3.766,1.862],[3.776,1.891],[3.785,1.919],[3.797,1.947],[3.806,1.975],[3.819,2.001],[3.831,2.029],[3.841,2.057],[3.853,2.083],[3.867,2.11],[3.881,2.137],[3.885,2.163],[3.867,2.188],[3.854,2.215],[3.834,2.23],[3.806,2.238],[3.779,2.251],[3.752,2.264],[3.724,2.274],[3.695,2.283],[3.668,2.294],[3.639,2.302],[3.61,2.311],[3.582,2.321],[3.553,2.329],[3.524,2.337],[3.495,2.345],[3.495,2.346]],[[4.709,3.992],[4.722,3.965],[4.734,3.938],[4.745,3.91],[4.752,3.881],[4.758,3.852],[4.759,3.822],[4.758,3.792],[4.755,3.762],[4.747,3.733],[4.737,3.705],[4.725,3.678],[4.71,3.652],[4.697,3.625],[4.681,3.599],[4.666,3.574],[4.65,3.548],[4.634,3.523],[4.618,3.497],[4.602,3.472],[4.584,3.448],[4.568,3.423],[4.552,3.397],[4.534,3.373],[4.518,3.348],[4.502,3.323],[4.486,3.297],[4.469,3.272],[4.453,3.247],[4.438,3.221],[4.422,3.196],[4.406,3.17],[4.39,3.145],[4.375,3.119],[4.359,3.093],[4.344,3.068],[4.329,3.042],[4.314,3.016],[4.299,2.99],[4.284,2.964],[4.269,2.938],[4.255,2.911],[4.24,2.885],[4.226,2.859],[4.211,2.833],[4.197,2.806],[4.183,2.78],[4.169,2.753],[4.155,2.726],[4.141,2.7],[4.127,2.673],[4.115,2.646],[4.1,2.62],[4.087,2.593],[4.073,2.567],[4.062,2.539],[4.05,2.511],[4.036,2.485],[4.02,2.459],[4.004,2.434],[3.992,2.406],[3.98,2.379],[3.968,2.351],[3.957,2.323],[3.939,2.3],[3.923,2.274],[3.907,2.249],[3.905,2.22],[3.907,2.19],[3.916,2.168],[3.946,2.171],[3.976,2.174],[3.995,2.153],[4.022,2.141],[4.051,2.132],[4.078,2.119],[4.104,2.104],[4.13,2.089],[4.156,2.075],[4.182,2.059],[4.208,2.046],[4.233,2.029],[4.257,2.011],[4.282,1.994],[4.307,1.979],[4.334,1.964],[4.358,1.946],[4.382,1.928],[4.404,1.909],[4.43,1.893],[4.455,1.877],[4.478,1.858],[4.502,1.84],[4.525,1.82],[4.549,1.803],[4.573,1.784],[4.596,1.765],[4.618,1.745],[4.642,1.727],[4.664,1.707],[4.687,1.688],[4.711,1.669],[4.733,1.649],[4.756,1.63],[4.777,1.608],[4.799,1.588],[4.822,1.568],[4.844,1.548],[4.866,1.528],[4.888,1.507],[4.909,1.487],[4.931,1.466],[4.953,1.445],[4.974,1.424],[4.996,1.403],[5.017,1.382],[5.038,1.361],[5.059,1.339],[5.08,1.318],[5.101,1.297],[5.122,1.275],[5.143,1.254],[5.164,1.232],[5.184,1.21],[5.205,1.188],[5.225,1.166],[5.245,1.144],[5.266,1.122],[5.285,1.099],[5.305,1.077],[5.325,1.054],[5.344,1.031],[5.364,1.008],[5.383,0.985],[5.402,0.962],[5.42,0.938],[5.439,0.915],[5.457,0.891],[5.475,0.867],[5.493,0.843],[5.51,0.818],[5.527,0.794],[5.544,0.769],[5.561,0.744],[5.577,0.718],[5.592,0.693],[5.608,0.667],[5.623,0.641],[5.637,0.615],[5.651,0.588],[5.665,0.562],[5.678,0.535],[5.691,0.508],[5.703,0.48],[5.715,0.452],[5.725,0.424],[5.736,0.396],[5.746,0.368],[5.755,0.339],[5.763,0.311],[5.771,0.282],[5.778,0.252],[5.784,0.223],[5.79,0.194],[5.795,0.164],[5.799,0.134],[5.802,0.104],[5.804,0.075],[5.806,0.045],[5.806,0.015],[5.806,-0.015],[5.806,-0.045],[5.804,-0.075],[5.801,-0.105],[5.798,-0.135],[5.794,-0.165],[5.789,-0.194],[5.784,-0.224],[5.777,-0.253],[5.77,-0.282],[5.762,-0.311],[5.754,-0.34],[5.745,-0.369],[5.735,-0.397],[5.725,-0.425],[5.713,-0.453],[5.702,-0.481],[5.69,-0.508],[5.677,-0.535],[5.664,-0.562],[5.65,-0.589],[5.636,-0.615],[5.621,-0.642],[5.606,-0.668],[5.591,-0.693],[5.575,-0.719],[5.559,-0.744],[5.542,-0.769],[5.526,-0.794],[5.508,-0.818],[5.491,-0.843],[5.473,-0.867],[5.455,-0.891],[5.437,-0.915],[5.418,-0.938],[5.4,-0.962],[5.381,-0.985],[5.362,-1.008],[5.342,-1.031],[5.323,-1.054],[5.303,-1.077],[5.283,-1.099],[5.263,-1.122],[5.243,-1.144],[5.223,-1.166],[5.203,-1.188],[5.182,-1.21],[5.162,-1.232],[5.141,-1.254],[5.12,-1.275],[5.099,-1.296],[5.078,-1.318],[5.057,-1.339],[5.036,-1.36],[5.014,-1.382],[4.993,-1.403],[4.972,-1.424],[4.95,-1.444],[4.929,-1.465],[4.907,-1.486],[4.885,-1.507],[4.863,-1.527],[4.841,-1.547],[4.819,-1.568],[4.796,-1.587],[4.774,-1.607],[4.752,-1.628],[4.73,-1.648],[4.707,-1.667],[4.684,-1.686],[4.661,-1.706],[4.638,-1.726],[4.615,-1.744],[4.592,-1.764],[4.568,-1.781],[4.544,-1.8],[4.521,-1.819],[4.498,-1.837],[4.474,-1.855],[4.449,-1.873],[4.426,-1.892],[4.401,-1.908],[4.376,-1.925],[4.353,-1.943],[4.328,-1.96],[4.301,-1.974],[4.277,-1.992],[4.253,-2.009],[4.227,-2.024],[4.199,-2.036],[4.172,-2.048],[4.146,-2.063],[4.119,-2.077],[4.093,-2.091],[4.066,-2.104],[4.039,-2.117],[4.011,-2.128],[3.983,-2.133],[3.956,-2.144],[3.929,-2.136],[3.905,-2.118],[3.879,-2.103],[3.87,-2.075],[3.859,-2.047],[3.841,-2.023],[3.826,-1.997],[3.811,-1.971],[3.802,-1.942],[3.792,-1.914],[3.779,-1.887],[3.765,-1.86],[3.754,-1.833],[3.745,-1.804],[3.738,-1.775],[3.725,-1.748],[3.717,-1.719],[3.704,-1.692],[3.697,-1.663],[3.686,-1.635],[3.679,-1.606],[3.67,-1.578],[3.661,-1.549],[3.652,-1.52],[3.643,-1.492],[3.635,-1.463],[3.627,-1.434],[3.62,-1.405],[3.611,-1.376],[3.604,-1.347],[3.597,-1.318],[3.59,-1.289],[3.583,-1.26],[3.576,-1.23],[3.57,-1.201],[3.563,-1.172],[3.557,-1.143],[3.551,-1.113],[3.545,-1.084],[3.54,-1.054],[3.534,-1.025],[3.529,-0.995],[3.524,-0.966],[3.519,-0.936],[3.514,-0.906],[3.51,-0.877],[3.506,-0.847],[3.501,-0.817],[3.497,-0.788],[3.493,-0.758],[3.489,-0.728],[3.486,-0.698],[3.482,-0.669],[3.479,-0.639],[3.476,-0.609],[3.473,-0.579],[3.47,-0.549],[3.468,-0.519],[3.465,-0.489],[3.463,-0.459],[3.461,-0.43],[3.459,-0.4],[3.457,-0.37],[3.455,-0.34],[3.453,-0.31],[3.452,-0.28],[3.451,-0.25],[3.45,-0.22],[3.449,-0.19],[3.448,-0.16],[3.447,-0.13],[3.446,-0.1],[3.446,-0.07],[3.446,-0.04],[3.446,-0.01],[3.446,0.02],[3.446,0.05],[3.446,0.08],[3.447,0.11],[3.447,0.14],[3.448,0.17],[3.449,0.191]],[[3.493,-2.35],[3.522,-2.342],[3.551,-2.334],[3.58,-2.327],[3.609,-2.318],[3.638,-2.31],[3.666,-2.301],[3.695,-2.293],[3.724,-2.284],[3.753,-2.279],[3.782,-2.271],[3.81,-2.262],[3.838,-2.267],[3.866,-2.277],[3.896,-2.28],[3.911,-2.304],[3.926,-2.329],[3.944,-2.353],[3.958,-2.379],[3.977,-2.403],[3.99,-2.43],[4.003,-2.457],[4.016,-2.484],[4.032,-2.509],[4.045,-2.536],[4.058,-2.563],[4.072,-2.59],[4.085,-2.616],[4.099,-2.643],[4.112,-2.67],[4.126,-2.697],[4.141,-2.723],[4.155,-2.749],[4.169,-2.776],[4.183,-2.802],[4.197,-2.829],[4.211,-2.855],[4.225,-2.882],[4.24,-2.908],[4.254,-2.934],[4.269,-2.96],[4.284,-2.987],[4.298,-3.013],[4.313,-3.039],[4.328,-3.065],[4.344,-3.091],[4.358,-3.117],[4.374,-3.142],[4.389,-3.168],[4.404,-3.194],[4.42,-3.22],[4.436,-3.245],[4.451,-3.271],[4.467,-3.296],[4.483,-3.322],[4.498,-3.347],[4.514,-3.373],[4.53,-3.398],[4.545,-3.424],[4.561,-3.45],[4.576,-3.476],[4.592,-3.501],[4.607,-3.527],[4.622,-3.553],[4.636,-3.58],[4.651,-3.606],[4.665,-3.632],[4.677,-3.66],[4.687,-3.688],[4.696,-3.716],[4.703,-3.745],[4.706,-3.775],[4.71,-3.805],[4.708,-3.835],[4.705,-3.864],[4.7,-3.894],[4.691,-3.923],[4.681,-3.951],[4.681,-3.952]],[[5.265,-3.784],[5.255,-3.756],[5.249,-3.726],[5.247,-3.697],[5.248,-3.667],[5.252,-3.637],[5.259,-3.608],[5.268,-3.579],[5.278,-3.551],[5.29,-3.523],[5.303,-3.496],[5.311,-3.479]],[[5.313,-3.857],[5.294,-3.834],[5.277,-3.809],[5.265,-3.784]],[[5.308,3.457],[5.293,3.483],[5.279,3.51],[5.265,3.536],[5.253,3.564],[5.241,3.591],[5.23,3.619],[5.22,3.647],[5.211,3.676],[5.208,3.706],[5.209,3.735],[5.217,3.764],[5.227,3.793],[5.241,3.819],[5.259,3.843],[5.278,3.866],[5.299,3.887],[5.309,3.896]]],"x_targets":[[3.9,2.2],[3.9,-2.2],[5.0,3.8],[5.0,-3.8]],"nulls":[[5.0,-3.8],[5.0,3.8],[3.9,-2.2],[3.9,2.2]],"strikes":[[3.486,2.348],[4.704,4.001],[4.677,-3.96],[3.49,-2.351],[5.315,-3.472],[5.315,-3.86],[5.315,3.901],[5.315,3.447]],"coil_MAt":{"CS1U":-52.71,"CS1L":-52.32,"CS2U":59.76,"CS2L":59.86,"CS3U":-76.93,"CS3L":-76.93,"PF1U":85.88,"PF1L":85.83,"PF2U":-21.61,"PF2L":-21.71,"PF3U":6.67,"PF3L":6.66,"PF4U":-8.77,"PF4L":-8.77,"PF5U":-1.58,"PF5L":-1.57},"coil_kA":{"CS1U":-45.8,"CS1L":-45.5,"CS2U":103.9,"CS2L":104.1,"CS3U":-133.8,"CS3L":-133.8,"PF1U":214.7,"PF1L":214.6,"PF2U":-40.9,"PF2L":-41.0,"PF3U":26.0,"PF3L":26.0,"PF4U":-34.3,"PF4L":-34.3,"PF5U":-9.4,"PF5L":-9.3},"delta_req":0.65,"delta_oft":0.587,"delta_boundary":0.584,"kappa":1.842,"q95":3.21,"its":25,"converged":true,"strike_miss_cm":[2.7,2.2,16.1,11.2]},"B_delta060":{"lcfs":[[5.806,0.001],[5.805,0.059],[5.801,0.117],[5.793,0.175],[5.783,0.232],[5.771,0.289],[5.756,0.346],[5.738,0.401],[5.718,0.456],[5.696,0.51],[5.672,0.563],[5.647,0.616],[5.619,0.667],[5.59,0.718],[5.56,0.767],[5.528,0.816],[5.496,0.865],[5.462,0.912],[5.427,0.959],[5.391,1.005],[5.355,1.051],[5.318,1.095],[5.28,1.14],[5.242,1.184],[5.203,1.227],[5.163,1.27],[5.124,1.313],[5.084,1.355],[5.043,1.397],[5.002,1.439],[4.961,1.48],[4.919,1.521],[4.877,1.561],[4.835,1.601],[4.792,1.641],[4.749,1.68],[4.705,1.718],[4.66,1.756],[4.616,1.793],[4.57,1.83],[4.524,1.865],[4.477,1.9],[4.43,1.934],[4.381,1.967],[4.332,1.998],[4.282,2.027],[4.231,2.055],[4.179,2.082],[4.126,2.106],[4.072,2.128],[4.016,2.144],[3.958,2.151],[3.909,2.123],[3.879,2.074],[3.857,2.02],[3.838,1.965],[3.819,1.909],[3.801,1.854],[3.784,1.798],[3.767,1.742],[3.75,1.687],[3.733,1.631],[3.717,1.575],[3.7,1.519],[3.684,1.463],[3.668,1.407],[3.652,1.351],[3.637,1.295],[3.622,1.238],[3.607,1.182],[3.592,1.125],[3.578,1.069],[3.564,1.012],[3.551,0.955],[3.538,0.899],[3.526,0.842],[3.514,0.784],[3.503,0.727],[3.493,0.67],[3.483,0.612],[3.474,0.555],[3.466,0.497],[3.458,0.439],[3.452,0.381],[3.446,0.323],[3.441,0.265],[3.437,0.207],[3.434,0.149],[3.432,0.091],[3.431,0.032],[3.431,-0.026],[3.432,-0.084],[3.433,-0.143],[3.436,-0.201],[3.44,-0.259],[3.445,-0.317],[3.45,-0.375],[3.457,-0.433],[3.464,-0.491],[3.472,-0.549],[3.481,-0.606],[3.49,-0.664],[3.501,-0.721],[3.512,-0.778],[3.523,-0.836],[3.535,-0.893],[3.548,-0.95],[3.561,-1.006],[3.575,-1.063],[3.589,-1.12],[3.603,-1.176],[3.618,-1.233],[3.633,-1.289],[3.648,-1.345],[3.663,-1.401],[3.679,-1.458],[3.695,-1.514],[3.711,-1.57],[3.727,-1.626],[3.743,-1.682],[3.76,-1.738],[3.776,-1.794],[3.793,-1.849],[3.81,-1.905],[3.827,-1.961],[3.844,-2.017],[3.861,-2.073],[3.88,-2.128],[3.909,-2.177],[3.965,-2.172],[4.021,-2.155],[4.075,-2.133],[4.128,-2.109],[4.18,-2.083],[4.232,-2.056],[4.282,-2.027],[4.332,-1.997],[4.382,-1.966],[4.43,-1.933],[4.477,-1.899],[4.524,-1.864],[4.57,-1.828],[4.615,-1.792],[4.66,-1.754],[4.704,-1.716],[4.748,-1.678],[4.791,-1.639],[4.834,-1.599],[4.877,-1.559],[4.919,-1.519],[4.96,-1.478],[5.002,-1.437],[5.043,-1.395],[5.083,-1.354],[5.123,-1.311],[5.163,-1.269],[5.202,-1.226],[5.241,-1.182],[5.28,-1.138],[5.317,-1.094],[5.354,-1.049],[5.391,-1.003],[5.427,-0.957],[5.461,-0.91],[5.495,-0.863],[5.528,-0.815],[5.56,-0.766],[5.59,-0.716],[5.619,-0.665],[5.646,-0.614],[5.672,-0.562],[5.696,-0.509],[5.718,-0.455],[5.738,-0.4],[5.756,-0.344],[5.771,-0.288],[5.783,-0.231],[5.793,-0.173],[5.801,-0.116],[5.805,-0.057]],"legs":[[[3.436,0.195],[3.438,0.225],[3.44,0.255],[3.442,0.285],[3.445,0.315],[3.448,0.345],[3.451,0.375],[3.454,0.404],[3.458,0.434],[3.461,0.464],[3.465,0.494],[3.469,0.523],[3.474,0.553],[3.478,0.583],[3.483,0.612],[3.488,0.642],[3.493,0.672],[3.498,0.701],[3.504,0.731],[3.509,0.76],[3.515,0.79],[3.521,0.819],[3.527,0.848],[3.534,0.878],[3.54,0.907],[3.547,0.936],[3.553,0.965],[3.56,0.995],[3.567,1.024],[3.575,1.053],[3.581,1.082],[3.589,1.111],[3.596,1.14],[3.603,1.169],[3.611,1.198],[3.618,1.227],[3.626,1.257],[3.634,1.285],[3.643,1.314],[3.651,1.343],[3.658,1.372],[3.666,1.401],[3.674,1.43],[3.683,1.458],[3.691,1.487],[3.699,1.516],[3.707,1.545],[3.715,1.574],[3.724,1.603],[3.733,1.631],[3.741,1.66],[3.75,1.689],[3.759,1.717],[3.769,1.746],[3.776,1.775],[3.784,1.804],[3.792,1.832],[3.801,1.861],[3.812,1.889],[3.818,1.918],[3.831,1.945],[3.836,1.975],[3.85,2.001],[3.856,2.03],[3.862,2.06],[3.883,2.08],[3.892,2.108],[3.902,2.137],[3.926,2.147],[3.956,2.151],[3.983,2.151],[4.012,2.144],[4.041,2.138],[4.07,2.13],[4.098,2.119],[4.126,2.108],[4.154,2.098],[4.18,2.083],[4.208,2.072],[4.234,2.057],[4.258,2.04],[4.285,2.027],[4.312,2.013],[4.336,1.995],[4.36,1.978],[4.386,1.963],[4.411,1.946],[4.435,1.929],[4.46,1.912],[4.485,1.895],[4.509,1.877],[4.533,1.859],[4.557,1.841],[4.58,1.822],[4.604,1.804],[4.627,1.784],[4.65,1.766],[4.672,1.746],[4.695,1.726],[4.718,1.707],[4.741,1.687],[4.763,1.668],[4.785,1.647],[4.807,1.627],[4.83,1.607],[4.852,1.587],[4.873,1.566],[4.895,1.545],[4.916,1.524],[4.937,1.503],[4.959,1.481],[4.981,1.461],[5.002,1.44],[5.023,1.418],[5.044,1.397],[5.064,1.375],[5.085,1.353],[5.106,1.332],[5.127,1.31],[5.147,1.288],[5.167,1.266],[5.188,1.244],[5.208,1.222],[5.228,1.199],[5.248,1.177],[5.268,1.154],[5.287,1.132],[5.307,1.109],[5.326,1.086],[5.345,1.063],[5.364,1.039],[5.383,1.016],[5.401,0.992],[5.42,0.969],[5.438,0.945],[5.455,0.921],[5.473,0.896],[5.49,0.872],[5.508,0.847],[5.524,0.822],[5.541,0.797],[5.557,0.772],[5.573,0.747],[5.588,0.721],[5.603,0.695],[5.618,0.669],[5.632,0.642],[5.646,0.616],[5.66,0.589],[5.673,0.562],[5.685,0.535],[5.697,0.507],[5.709,0.48],[5.72,0.452],[5.73,0.424],[5.74,0.395],[5.749,0.367],[5.758,0.338],[5.766,0.309],[5.773,0.28],[5.78,0.251],[5.786,0.221],[5.791,0.192],[5.795,0.162],[5.799,0.132],[5.802,0.102],[5.804,0.073],[5.806,0.043],[5.806,0.013],[5.806,-0.017],[5.805,-0.047],[5.804,-0.077],[5.801,-0.107],[5.798,-0.137],[5.794,-0.167],[5.79,-0.197],[5.784,-0.226],[5.778,-0.255],[5.772,-0.285],[5.764,-0.314],[5.756,-0.343],[5.747,-0.371],[5.738,-0.4],[5.728,-0.428],[5.717,-0.456],[5.707,-0.484],[5.695,-0.512],[5.683,-0.539],[5.67,-0.566],[5.657,-0.593],[5.643,-0.62],[5.629,-0.647],[5.615,-0.673],[5.6,-0.699],[5.585,-0.725],[5.569,-0.75],[5.553,-0.776],[5.537,-0.801],[5.521,-0.826],[5.504,-0.851],[5.487,-0.876],[5.469,-0.9],[5.451,-0.924],[5.433,-0.948],[5.415,-0.972],[5.397,-0.996],[5.378,-1.019],[5.359,-1.043],[5.341,-1.066],[5.321,-1.089],[5.302,-1.112],[5.283,-1.135],[5.263,-1.157],[5.243,-1.18],[5.223,-1.202],[5.203,-1.225],[5.183,-1.247],[5.163,-1.269],[5.142,-1.291],[5.122,-1.313],[5.101,-1.335],[5.08,-1.356],[5.06,-1.378],[5.039,-1.4],[5.018,-1.421],[4.996,-1.442],[4.975,-1.463],[4.954,-1.485],[4.933,-1.506],[4.911,-1.526],[4.89,-1.547],[4.868,-1.568],[4.846,-1.588],[4.824,-1.609],[4.802,-1.629],[4.78,-1.649],[4.758,-1.67],[4.736,-1.69],[4.713,-1.709],[4.69,-1.729],[4.667,-1.748],[4.644,-1.768],[4.621,-1.787],[4.598,-1.806],[4.575,-1.825],[4.551,-1.843],[4.526,-1.86],[4.504,-1.88],[4.48,-1.899],[4.455,-1.915],[4.432,-1.934],[4.406,-1.949],[4.382,-1.967],[4.357,-1.983],[4.332,-1.999],[4.307,-2.016],[4.282,-2.031],[4.255,-2.045],[4.228,-2.058],[4.203,-2.075],[4.176,-2.087],[4.148,-2.097],[4.119,-2.108],[4.093,-2.122],[4.069,-2.14],[4.041,-2.148],[4.015,-2.16],[3.99,-2.176],[3.961,-2.18],[3.936,-2.187],[3.922,-2.213],[3.911,-2.24],[3.92,-2.269],[3.928,-2.297],[3.932,-2.327],[3.944,-2.354],[3.952,-2.382],[3.965,-2.409],[3.975,-2.438],[3.983,-2.467],[3.991,-2.496],[4.001,-2.524],[4.011,-2.552],[4.02,-2.581],[4.029,-2.609],[4.038,-2.638],[4.049,-2.666],[4.059,-2.694],[4.069,-2.722],[4.08,-2.75],[4.09,-2.778],[4.101,-2.806],[4.112,-2.834],[4.123,-2.862],[4.134,-2.89],[4.146,-2.918],[4.158,-2.945],[4.17,-2.973],[4.182,-3.0],[4.194,-3.028],[4.207,-3.055],[4.22,-3.082],[4.233,-3.109],[4.247,-3.136],[4.261,-3.162],[4.275,-3.189],[4.289,-3.215],[4.303,-3.241],[4.318,-3.267],[4.333,-3.294],[4.348,-3.319],[4.364,-3.345],[4.38,-3.37],[4.396,-3.396],[4.411,-3.421],[4.427,-3.447],[4.443,-3.472],[4.459,-3.497],[4.476,-3.523],[4.492,-3.548],[4.507,-3.574],[4.523,-3.599],[4.539,-3.625],[4.554,-3.651],[4.568,-3.677],[4.582,-3.704],[4.594,-3.731],[4.606,-3.759],[4.617,-3.787],[4.626,-3.815],[4.633,-3.844],[4.638,-3.874],[4.641,-3.896]],[[3.49,-2.271],[3.519,-2.269],[3.549,-2.267],[3.579,-2.264],[3.609,-2.262],[3.638,-2.256],[3.668,-2.252],[3.696,-2.245],[3.726,-2.242],[3.753,-2.233],[3.783,-2.232],[3.813,-2.23],[3.835,-2.211],[3.863,-2.221],[3.891,-2.231],[3.909,-2.227],[3.906,-2.197],[3.903,-2.168],[3.888,-2.143],[3.869,-2.121],[3.863,-2.091],[3.862,-2.062],[3.852,-2.034],[3.839,-2.007],[3.831,-1.978],[3.824,-1.949],[3.813,-1.922],[3.804,-1.893],[3.795,-1.864],[3.786,-1.836],[3.776,-1.807],[3.772,-1.778],[3.762,-1.749],[3.755,-1.72],[3.746,-1.692],[3.738,-1.663],[3.729,-1.634],[3.721,-1.606],[3.713,-1.577],[3.705,-1.548],[3.697,-1.519],[3.689,-1.49],[3.68,-1.462],[3.672,-1.433],[3.663,-1.404],[3.656,-1.375],[3.647,-1.346],[3.64,-1.317],[3.632,-1.288],[3.624,-1.259],[3.617,-1.23],[3.609,-1.201],[3.602,-1.172],[3.594,-1.143],[3.587,-1.114],[3.58,-1.085],[3.572,-1.056],[3.566,-1.026],[3.559,-0.997],[3.552,-0.968],[3.545,-0.939],[3.539,-0.909],[3.533,-0.88],[3.526,-0.851],[3.52,-0.821],[3.514,-0.792],[3.508,-0.763],[3.503,-0.733],[3.497,-0.704],[3.492,-0.674],[3.487,-0.644],[3.482,-0.615],[3.477,-0.585],[3.473,-0.556],[3.469,-0.526],[3.465,-0.496],[3.461,-0.466],[3.457,-0.437],[3.453,-0.407],[3.45,-0.377],[3.447,-0.347],[3.445,-0.317],[3.442,-0.287],[3.44,-0.257],[3.438,-0.228],[3.436,-0.198],[3.434,-0.168],[3.433,-0.138],[3.432,-0.108],[3.431,-0.078],[3.431,-0.048],[3.431,-0.018],[3.431,0.012],[3.431,0.042],[3.431,0.072],[3.432,0.102],[3.433,0.132],[3.435,0.162],[3.436,0.192],[3.436,0.195]],[[4.665,3.935],[4.664,3.905],[4.661,3.876],[4.655,3.846],[4.648,3.817],[4.639,3.788],[4.628,3.761],[4.616,3.733],[4.602,3.706],[4.588,3.68],[4.573,3.654],[4.558,3.628],[4.542,3.603],[4.526,3.578],[4.509,3.553],[4.492,3.528],[4.475,3.503],[4.459,3.478],[4.443,3.453],[4.426,3.428],[4.41,3.402],[4.394,3.377],[4.377,3.352],[4.362,3.327],[4.346,3.301],[4.331,3.275],[4.315,3.249],[4.3,3.223],[4.285,3.197],[4.271,3.171],[4.257,3.145],[4.243,3.118],[4.229,3.091],[4.216,3.064],[4.203,3.037],[4.19,3.01],[4.177,2.983],[4.165,2.956],[4.153,2.928],[4.141,2.901],[4.129,2.873],[4.118,2.845],[4.107,2.818],[4.095,2.79],[4.084,2.762],[4.074,2.734],[4.063,2.706],[4.052,2.678],[4.043,2.649],[4.033,2.621],[4.022,2.593],[4.012,2.565],[4.002,2.537],[3.992,2.508],[3.982,2.48],[3.97,2.453],[3.959,2.425],[3.95,2.396],[3.942,2.367],[3.928,2.341],[3.913,2.315],[3.896,2.291],[3.878,2.266],[3.855,2.25],[3.826,2.243],[3.796,2.245],[3.767,2.253],[3.738,2.259],[3.708,2.261],[3.678,2.264],[3.649,2.269],[3.619,2.272],[3.589,2.275],[3.559,2.276],[3.529,2.279],[3.499,2.28],[3.477,2.281]],[[5.287,-3.709],[5.28,-3.68],[5.276,-3.65],[5.275,-3.62],[5.277,-3.591],[5.282,-3.561],[5.289,-3.532],[5.298,-3.503],[5.308,-3.475],[5.312,-3.465]],[[5.309,3.457],[5.297,3.485],[5.287,3.513],[5.279,3.542],[5.272,3.571],[5.267,3.601],[5.264,3.631],[5.265,3.661],[5.27,3.69],[5.278,3.719],[5.29,3.746],[5.3,3.765]]],"x_targets":[[3.9,2.2],[3.9,-2.2],[5.0,3.8],[5.0,-3.8]],"nulls":[[5.0,-3.8],[5.0,3.8],[3.9,2.2],[3.9,-2.2]],"strikes":[[4.642,-3.908],[3.484,-2.271],[3.474,2.281],[4.665,3.943],[5.315,-3.458],[5.315,-3.767],[5.315,3.786],[5.315,3.444]],"coil_MAt":{"CS1U":1.34,"CS1L":1.55,"CS2U":-141.46,"CS2L":-141.33,"CS3U":227.48,"CS3L":227.61,"PF1U":-90.36,"PF1L":-90.34,"PF2U":35.05,"PF2L":34.94,"PF3U":6.31,"PF3L":6.34,"PF4U":-7.71,"PF4L":-7.75,"PF5U":-2.06,"PF5L":-2.04},"coil_kA":{"CS1U":1.2,"CS1L":1.3,"CS2U":-246.0,"CS2L":-245.8,"CS3U":395.6,"CS3L":395.8,"PF1U":-225.9,"PF1L":-225.9,"PF2U":66.3,"PF2L":66.0,"PF3U":24.7,"PF3L":24.8,"PF4U":-30.1,"PF4L":-30.3,"PF5U":-12.2,"PF5L":-12.1},"delta_req":0.6,"delta_oft":0.577,"delta_boundary":0.568,"kappa":1.844,"q95":3.16,"its":22,"converged":true,"strike_miss_cm":[8.7,9.3,9.2,5.0]},"C_secR505":{"lcfs":[[5.806,0.001],[5.804,0.059],[5.8,0.117],[5.792,0.174],[5.782,0.231],[5.769,0.288],[5.753,0.344],[5.734,0.399],[5.714,0.453],[5.691,0.506],[5.666,0.559],[5.639,0.61],[5.611,0.661],[5.581,0.711],[5.55,0.76],[5.517,0.808],[5.483,0.855],[5.449,0.902],[5.413,0.947],[5.377,0.993],[5.339,1.037],[5.301,1.081],[5.263,1.125],[5.224,1.168],[5.185,1.21],[5.145,1.253],[5.104,1.294],[5.064,1.336],[5.023,1.377],[4.981,1.418],[4.94,1.458],[4.898,1.498],[4.855,1.538],[4.813,1.577],[4.77,1.616],[4.726,1.655],[4.682,1.693],[4.638,1.73],[4.593,1.767],[4.548,1.804],[4.502,1.84],[4.456,1.875],[4.409,1.909],[4.362,1.943],[4.314,1.975],[4.265,2.007],[4.215,2.037],[4.166,2.067],[4.115,2.095],[4.064,2.122],[4.011,2.148],[3.958,2.171],[3.902,2.174],[3.872,2.125],[3.849,2.072],[3.826,2.018],[3.805,1.964],[3.784,1.91],[3.763,1.856],[3.743,1.801],[3.724,1.747],[3.705,1.692],[3.687,1.636],[3.67,1.581],[3.653,1.525],[3.637,1.47],[3.622,1.413],[3.607,1.357],[3.594,1.301],[3.58,1.244],[3.568,1.188],[3.556,1.131],[3.544,1.074],[3.534,1.017],[3.524,0.96],[3.514,0.902],[3.506,0.845],[3.498,0.787],[3.49,0.73],[3.483,0.672],[3.477,0.614],[3.471,0.557],[3.466,0.499],[3.462,0.441],[3.458,0.383],[3.454,0.325],[3.451,0.267],[3.449,0.209],[3.447,0.151],[3.446,0.093],[3.445,0.035],[3.445,-0.023],[3.446,-0.081],[3.447,-0.139],[3.449,-0.197],[3.451,-0.255],[3.453,-0.313],[3.457,-0.371],[3.461,-0.429],[3.465,-0.487],[3.47,-0.545],[3.476,-0.603],[3.482,-0.661],[3.489,-0.718],[3.496,-0.776],[3.504,-0.833],[3.513,-0.891],[3.522,-0.948],[3.532,-1.005],[3.542,-1.063],[3.553,-1.119],[3.565,-1.176],[3.578,-1.233],[3.591,-1.29],[3.605,-1.346],[3.62,-1.402],[3.635,-1.458],[3.651,-1.514],[3.668,-1.57],[3.685,-1.625],[3.704,-1.68],[3.722,-1.735],[3.742,-1.79],[3.763,-1.844],[3.785,-1.898],[3.807,-1.951],[3.831,-2.004],[3.858,-2.055],[3.893,-2.102],[3.942,-2.13],[4.0,-2.126],[4.055,-2.107],[4.108,-2.084],[4.16,-2.057],[4.21,-2.029],[4.26,-2.0],[4.31,-1.969],[4.358,-1.937],[4.406,-1.904],[4.453,-1.87],[4.5,-1.835],[4.546,-1.8],[4.591,-1.764],[4.636,-1.727],[4.68,-1.69],[4.724,-1.652],[4.768,-1.613],[4.811,-1.575],[4.854,-1.535],[4.896,-1.496],[4.939,-1.456],[4.98,-1.415],[5.022,-1.375],[5.063,-1.334],[5.104,-1.292],[5.144,-1.251],[5.184,-1.208],[5.224,-1.166],[5.263,-1.123],[5.301,-1.08],[5.339,-1.036],[5.376,-0.991],[5.413,-0.946],[5.449,-0.9],[5.483,-0.854],[5.517,-0.806],[5.55,-0.758],[5.581,-0.71],[5.611,-0.66],[5.64,-0.609],[5.666,-0.558],[5.691,-0.505],[5.714,-0.452],[5.735,-0.397],[5.753,-0.342],[5.769,-0.287],[5.782,-0.23],[5.792,-0.173],[5.8,-0.115],[5.805,-0.057]],"legs":[[[3.448,0.191],[3.449,0.221],[3.45,0.251],[3.452,0.281],[3.453,0.311],[3.455,0.341],[3.457,0.371],[3.459,0.401],[3.461,0.431],[3.463,0.461],[3.465,0.491],[3.468,0.521],[3.47,0.55],[3.473,0.58],[3.476,0.61],[3.479,0.64],[3.483,0.67],[3.486,0.7],[3.49,0.729],[3.494,0.759],[3.497,0.789],[3.502,0.819],[3.506,0.848],[3.511,0.878],[3.515,0.908],[3.52,0.937],[3.525,0.967],[3.53,0.996],[3.535,1.026],[3.541,1.055],[3.547,1.085],[3.552,1.114],[3.558,1.144],[3.564,1.173],[3.57,1.202],[3.577,1.232],[3.584,1.261],[3.591,1.29],[3.598,1.319],[3.605,1.348],[3.612,1.377],[3.62,1.406],[3.629,1.435],[3.636,1.464],[3.645,1.493],[3.652,1.522],[3.66,1.551],[3.669,1.579],[3.677,1.608],[3.688,1.636],[3.697,1.665],[3.705,1.694],[3.714,1.722],[3.724,1.75],[3.733,1.779],[3.744,1.807],[3.756,1.834],[3.767,1.862],[3.776,1.891],[3.785,1.919],[3.797,1.947],[3.806,1.975],[3.82,2.001],[3.831,2.029],[3.841,2.057],[3.853,2.083],[3.867,2.11],[3.881,2.137],[3.884,2.163],[3.867,2.188],[3.854,2.215],[3.834,2.23],[3.806,2.238],[3.779,2.251],[3.752,2.264],[3.724,2.274],[3.695,2.283],[3.668,2.294],[3.639,2.302],[3.61,2.312],[3.582,2.321],[3.553,2.329],[3.524,2.338],[3.495,2.346],[3.495,2.346]],[[4.745,4.051],[4.758,4.025],[4.771,3.997],[4.782,3.97],[4.792,3.941],[4.799,3.912],[4.806,3.883],[4.803,3.853],[4.803,3.823],[4.802,3.793],[4.798,3.764],[4.786,3.736],[4.775,3.708],[4.761,3.681],[4.746,3.655],[4.73,3.63],[4.713,3.605],[4.697,3.58],[4.68,3.555],[4.663,3.531],[4.646,3.506],[4.629,3.481],[4.611,3.457],[4.594,3.433],[4.578,3.408],[4.56,3.384],[4.542,3.359],[4.525,3.334],[4.509,3.31],[4.492,3.285],[4.475,3.26],[4.459,3.235],[4.442,3.209],[4.426,3.184],[4.409,3.159],[4.393,3.134],[4.377,3.109],[4.362,3.083],[4.346,3.057],[4.33,3.032],[4.315,3.006],[4.3,2.98],[4.285,2.954],[4.27,2.928],[4.255,2.902],[4.24,2.876],[4.225,2.85],[4.211,2.824],[4.196,2.798],[4.182,2.771],[4.168,2.745],[4.154,2.718],[4.139,2.692],[4.126,2.665],[4.112,2.638],[4.098,2.612],[4.085,2.585],[4.071,2.559],[4.06,2.531],[4.047,2.504],[4.033,2.477],[4.016,2.452],[4.002,2.426],[3.989,2.399],[3.977,2.372],[3.966,2.344],[3.953,2.317],[3.935,2.293],[3.919,2.268],[3.903,2.242],[3.906,2.212],[3.908,2.182],[3.924,2.169],[3.954,2.172],[3.98,2.168],[4.002,2.15],[4.03,2.139],[4.058,2.129],[4.085,2.115],[4.111,2.1],[4.137,2.085],[4.163,2.071],[4.188,2.055],[4.216,2.042],[4.239,2.024],[4.263,2.006],[4.288,1.99],[4.314,1.975],[4.34,1.959],[4.364,1.941],[4.388,1.923],[4.411,1.905],[4.437,1.889],[4.461,1.871],[4.485,1.854],[4.508,1.835],[4.531,1.815],[4.555,1.798],[4.579,1.779],[4.602,1.76],[4.625,1.74],[4.648,1.722],[4.67,1.701],[4.694,1.683],[4.716,1.663],[4.739,1.644],[4.761,1.624],[4.783,1.603],[4.805,1.583],[4.828,1.563],[4.85,1.543],[4.872,1.523],[4.894,1.502],[4.915,1.481],[4.937,1.46],[4.959,1.44],[4.98,1.419],[5.002,1.398],[5.023,1.377],[5.044,1.355],[5.065,1.334],[5.086,1.313],[5.107,1.291],[5.128,1.27],[5.149,1.248],[5.169,1.226],[5.19,1.205],[5.21,1.182],[5.231,1.16],[5.251,1.138],[5.271,1.116],[5.291,1.093],[5.311,1.071],[5.33,1.048],[5.35,1.025],[5.369,1.002],[5.388,0.979],[5.407,0.956],[5.425,0.932],[5.444,0.908],[5.462,0.884],[5.48,0.86],[5.497,0.836],[5.515,0.812],[5.532,0.787],[5.548,0.762],[5.565,0.737],[5.581,0.712],[5.596,0.686],[5.612,0.66],[5.626,0.634],[5.641,0.608],[5.655,0.581],[5.668,0.554],[5.681,0.527],[5.694,0.5],[5.706,0.473],[5.717,0.445],[5.728,0.417],[5.738,0.389],[5.748,0.36],[5.757,0.332],[5.765,0.303],[5.772,0.274],[5.779,0.244],[5.785,0.215],[5.791,0.186],[5.795,0.156],[5.799,0.126],[5.802,0.096],[5.804,0.066],[5.806,0.036],[5.806,0.006],[5.806,-0.024],[5.805,-0.054],[5.803,-0.084],[5.8,-0.113],[5.797,-0.143],[5.793,-0.173],[5.788,-0.202],[5.782,-0.232],[5.775,-0.261],[5.768,-0.29],[5.76,-0.319],[5.751,-0.348],[5.742,-0.376],[5.732,-0.405],[5.722,-0.433],[5.71,-0.461],[5.699,-0.488],[5.686,-0.516],[5.674,-0.543],[5.66,-0.57],[5.647,-0.596],[5.632,-0.623],[5.618,-0.649],[5.602,-0.675],[5.587,-0.7],[5.571,-0.726],[5.554,-0.751],[5.538,-0.776],[5.521,-0.801],[5.504,-0.825],[5.486,-0.85],[5.469,-0.874],[5.451,-0.898],[5.432,-0.922],[5.414,-0.945],[5.395,-0.969],[5.376,-0.992],[5.357,-1.015],[5.337,-1.038],[5.318,-1.061],[5.298,-1.083],[5.278,-1.106],[5.258,-1.128],[5.238,-1.15],[5.218,-1.172],[5.197,-1.194],[5.177,-1.216],[5.156,-1.238],[5.136,-1.26],[5.114,-1.281],[5.093,-1.302],[5.072,-1.324],[5.051,-1.345],[5.03,-1.366],[5.009,-1.388],[4.988,-1.409],[4.966,-1.43],[4.944,-1.45],[4.923,-1.471],[4.901,-1.492],[4.879,-1.512],[4.857,-1.533],[4.835,-1.553],[4.813,-1.573],[4.79,-1.593],[4.768,-1.613],[4.746,-1.633],[4.724,-1.653],[4.701,-1.673],[4.678,-1.692],[4.655,-1.711],[4.632,-1.73],[4.609,-1.749],[4.586,-1.769],[4.561,-1.786],[4.538,-1.805],[4.515,-1.824],[4.491,-1.842],[4.467,-1.86],[4.443,-1.878],[4.419,-1.896],[4.394,-1.912],[4.37,-1.93],[4.345,-1.947],[4.32,-1.964],[4.294,-1.978],[4.27,-1.996],[4.245,-2.013],[4.219,-2.028],[4.191,-2.039],[4.164,-2.051],[4.138,-2.066],[4.112,-2.08],[4.085,-2.094],[4.058,-2.107],[4.03,-2.119],[4.002,-2.129],[3.975,-2.135],[3.947,-2.142],[3.922,-2.128],[3.897,-2.111],[3.877,-2.092],[3.868,-2.063],[3.853,-2.037],[3.835,-2.013],[3.821,-1.987],[3.808,-1.96],[3.799,-1.931],[3.787,-1.904],[3.774,-1.876],[3.761,-1.85],[3.751,-1.821],[3.742,-1.793],[3.733,-1.765],[3.723,-1.736],[3.713,-1.709],[3.702,-1.681],[3.692,-1.652],[3.684,-1.624],[3.677,-1.595],[3.666,-1.566],[3.659,-1.537],[3.649,-1.509],[3.64,-1.48],[3.633,-1.451],[3.625,-1.423],[3.617,-1.394],[3.609,-1.365],[3.602,-1.335],[3.595,-1.306],[3.588,-1.277],[3.581,-1.248],[3.574,-1.219],[3.568,-1.19],[3.562,-1.16],[3.555,-1.131],[3.55,-1.101],[3.544,-1.072],[3.538,-1.043],[3.533,-1.013],[3.527,-0.984],[3.523,-0.954],[3.518,-0.924],[3.513,-0.895],[3.508,-0.865],[3.504,-0.835],[3.5,-0.806],[3.496,-0.776],[3.492,-0.746],[3.488,-0.716],[3.485,-0.687],[3.481,-0.657],[3.478,-0.627],[3.475,-0.597],[3.472,-0.567],[3.469,-0.537],[3.467,-0.508],[3.464,-0.478],[3.462,-0.448],[3.46,-0.418],[3.458,-0.388],[3.456,-0.358],[3.454,-0.328],[3.453,-0.298],[3.451,-0.268],[3.45,-0.238],[3.449,-0.208],[3.448,-0.178],[3.447,-0.148],[3.446,-0.118],[3.446,-0.088],[3.446,-0.058],[3.445,-0.028],[3.445,0.002],[3.445,0.032],[3.446,0.062],[3.446,0.092],[3.446,0.122],[3.447,0.152],[3.448,0.182],[3.448,0.191]],[[3.493,-2.351],[3.522,-2.343],[3.551,-2.335],[3.58,-2.328],[3.609,-2.319],[3.638,-2.311],[3.666,-2.302],[3.695,-2.294],[3.724,-2.285],[3.753,-2.281],[3.782,-2.272],[3.81,-2.263],[3.838,-2.269],[3.866,-2.28],[3.896,-2.283],[3.91,-2.307],[3.927,-2.331],[3.944,-2.356],[3.959,-2.382],[3.978,-2.405],[3.991,-2.432],[4.004,-2.459],[4.018,-2.486],[4.034,-2.511],[4.047,-2.538],[4.06,-2.565],[4.073,-2.592],[4.087,-2.618],[4.101,-2.645],[4.115,-2.672],[4.129,-2.698],[4.144,-2.724],[4.158,-2.75],[4.172,-2.777],[4.187,-2.803],[4.201,-2.829],[4.216,-2.856],[4.23,-2.882],[4.245,-2.908],[4.26,-2.934],[4.275,-2.96],[4.29,-2.986],[4.305,-3.012],[4.32,-3.038],[4.336,-3.063],[4.351,-3.089],[4.367,-3.115],[4.383,-3.14],[4.399,-3.165],[4.414,-3.191],[4.43,-3.217],[4.447,-3.242],[4.462,-3.267],[4.479,-3.292],[4.496,-3.317],[4.512,-3.342],[4.528,-3.367],[4.545,-3.392],[4.562,-3.417],[4.578,-3.442],[4.595,-3.467],[4.612,-3.492],[4.628,-3.517],[4.643,-3.543],[4.659,-3.569],[4.675,-3.594],[4.69,-3.62],[4.705,-3.646],[4.719,-3.672],[4.731,-3.7],[4.74,-3.728],[4.749,-3.757],[4.758,-3.785],[4.762,-3.815],[4.764,-3.845],[4.762,-3.874],[4.759,-3.904],[4.752,-3.934],[4.743,-3.962],[4.733,-3.99],[4.722,-4.018],[4.72,-4.022]],[[5.293,-3.711],[5.29,-3.681],[5.291,-3.651],[5.294,-3.622],[5.3,-3.592],[5.309,-3.563],[5.312,-3.553]],[[5.311,-3.77],[5.3,-3.742],[5.293,-3.713],[5.293,-3.711]],[[5.314,3.505],[5.302,3.532],[5.29,3.56],[5.28,3.588],[5.271,3.616],[5.265,3.646],[5.261,3.675],[5.262,3.705],[5.265,3.735],[5.273,3.764],[5.287,3.791],[5.292,3.801]]],"x_targets":[[3.9,2.2],[3.9,-2.2],[5.05,3.8],[5.05,-3.8]],"nulls":[[5.05,-3.8],[5.05,3.8],[3.9,-2.2],[3.9,2.2]],"strikes":[[3.486,2.348],[4.742,4.057],[4.719,-4.023],[3.491,-2.351],[5.315,-3.544],[5.315,-3.778],[5.315,3.832],[5.315,3.503]],"coil_MAt":{"CS1U":-49.56,"CS1L":-49.16,"CS2U":53.31,"CS2L":53.4,"CS3U":-61.75,"CS3L":-61.78,"PF1U":73.39,"PF1L":73.33,"PF2U":-14.91,"PF2L":-14.98,"PF3U":6.6,"PF3L":6.6,"PF4U":-8.7,"PF4L":-8.72,"PF5U":-1.58,"PF5L":-1.55},"coil_kA":{"CS1U":-43.1,"CS1L":-42.8,"CS2U":92.7,"CS2L":92.9,"CS3U":-107.4,"CS3L":-107.4,"PF1U":183.5,"PF1L":183.3,"PF2U":-28.2,"PF2L":-28.3,"PF3U":25.8,"PF3L":25.8,"PF4U":-34.0,"PF4L":-34.1,"PF5U":-9.3,"PF5L":-9.2},"delta_req":0.65,"delta_oft":0.587,"delta_boundary":0.583,"kappa":1.841,"q95":3.21,"its":25,"converged":true,"strike_miss_cm":[2.7,2.1,22.8,18.8]}},"null_space":{"whole_coil_set":13.062167290387617,"B_minus_A_total":0.3992909330743353,"B_minus_A_by_pair":{"CS1":7.489349972851472,"CS2":13.852551179413691,"CS3":13.328679793160603,"PF1":10.061281255265758,"PF2":8.4651215660604,"PF3":0.42545066465315534,"PF4":1.7406181902613553,"PF5":1.1076289634750494},"C_minus_A_total":0.042505717878439264},"strike_targets":[[3.51,2.36],[3.51,-2.36],[4.61,3.87],[4.61,-3.87]]};
+const NS = 'http://www.w3.org/2000/svg';
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const X = R => R * 100, Y = Z => -Z * 100;
+const el = (tag, attrs = {}, parent) => {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const pathD = (pts, closed) => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('') + (closed ? 'Z' : '');
+const lerp = (a, b, t) => a + (b - a) * t;
+const lerpPts = (A, B, t) => A.map((p, i) => [lerp(p[0], B[i][0], t), lerp(p[1], B[i][1], t)]);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const A = D.cases.A_baseline, B = D.cases.B_delta060, C = D.cases.C_secR505;
+
+const COIL_TEXT = {
+  CS: 'a central solenoid magnet, in the hole of the doughnut. It mainly drives the plasma current and also helps shape the inside edge.',
+  PF1: 'a shaping magnet near the top and bottom of the central column.',
+  PF2: 'a shaping magnet above and below the plasma. It helps form the corners.',
+  PF3: 'a shaping magnet above and below the plasma, further out.',
+  PF4: 'a big outer shaping magnet. It holds the plasma in place from the outside.',
+  PF5: 'an outer magnet that also keeps the plasma from sliding up or down.'
+};
+
+function pairTotals(c) {
+  const out = {};
+  for (const [k, v] of Object.entries(c.coil_MAt)) { const p = k.slice(0, -1); out[p] = (out[p] || 0) + v / 2; }
+  return out;
+}
+
+function coilColor(v, vmax) {
+  const t = Math.min(1, Math.abs(v) / vmax);
+  if (t < 0.06) return css('--pull-zero');
+  return `color-mix(in srgb, ${v > 0 ? css('--pull-pos') : css('--pull-neg')} ${Math.round(25 + 75 * t)}%, ${css('--pull-zero')})`;
+}
+
+function drawWall(svg, w = 3) {
+  el('path', { d: pathD(D.limiter, true), fill: 'none', stroke: css('--wall'), 'stroke-width': w, 'stroke-linejoin': 'round' }, svg);
+}
+
+function plasmaGradient(svg, id) {
+  const defs = el('defs', {}, svg);
+  const g = el('radialGradient', { id, cx: '55%', cy: '50%', r: '60%' }, defs);
+  el('stop', { offset: '0%', 'stop-color': css('--plasma-glow') }, g);
+  el('stop', { offset: '100%', 'stop-color': css('--plasma'), 'stop-opacity': '0.85' }, g);
+  return `url(#${id})`;
+}
+
+function pin(svg, R, Z, scale = 1) {
+  // head points away from the midplane: up for the top corner, down for the bottom one
+  const g = el('g', { transform: `translate(${X(R)} ${Y(Z)}) scale(${scale} ${Z < 0 ? -scale : scale})` }, svg);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: -22, stroke: css('--ink-2'), 'stroke-width': 3, 'stroke-linecap': 'round' }, g);
+  el('circle', { cx: 0, cy: -26, r: 9, fill: css('--bad'), stroke: css('--surface'), 'stroke-width': 2 }, g);
+  return g;
+}
+
+function cross(svg, R, Z, color, size = 9, w = 3.5) {
+  const g = el('g', {}, svg);
+  el('line', { x1: X(R) - size, y1: Y(Z) - size, x2: X(R) + size, y2: Y(Z) + size, stroke: color, 'stroke-width': w, 'stroke-linecap': 'round' }, g);
+  el('line', { x1: X(R) - size, y1: Y(Z) + size, x2: X(R) + size, y2: Y(Z) - size, stroke: color, 'stroke-width': w, 'stroke-linecap': 'round' }, g);
+  return g;
+}
+
+/* ---------- Chapter 1: machine ---------- */
+function drawMachine() {
+  const svg = document.getElementById('svgMachine');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '40 -545 710 1090');
+  const fill = plasmaGradient(svg, 'pg1');
+  const vmax = Math.max(...Object.values(A.coil_MAt).map(Math.abs));
+  const info = document.getElementById('coilInfo');
+  for (const [name, b] of Object.entries(D.coils)) {
+    const r = el('rect', {
+      x: X(b[0]), y: Y(b[3]), width: X(b[2]) - X(b[0]), height: Y(b[1]) - Y(b[3]), rx: 4,
+      fill: coilColor(A.coil_MAt[name], vmax), stroke: css('--surface'), 'stroke-width': 2,
+      tabindex: 0, role: 'button', 'aria-label': `Magnet ${name}`, style: 'cursor:pointer'
+    }, svg);
+    const show = () => {
+      const kind = name.startsWith('CS') ? COIL_TEXT.CS : COIL_TEXT[name.slice(0, -1)];
+      const side = name.endsWith('U') ? 'top' : 'bottom';
+      info.innerHTML = `<b>${name}</b> (${side} half): ${kind} In our starting shape it carries <b>${Math.abs(A.coil_MAt[name]).toFixed(0)} million amp-turns</b>.`;
+      svg.querySelectorAll('rect').forEach(x => x.setAttribute('stroke', css('--surface')));
+      r.setAttribute('stroke', css('--ink'));
+    };
+    r.addEventListener('mouseenter', show); r.addEventListener('focus', show); r.addEventListener('click', show);
+  }
+  drawWall(svg);
+  el('path', { d: pathD(A.lcfs, true), fill, stroke: css('--plasma'), 'stroke-width': 2 }, svg);
+  const t = el('text', { x: X(4.62), y: Y(0) + 8, 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 700, fill: css('--ink') }, svg);
+  t.textContent = 'plasma';
+  const l = el('text', { x: X(0.45), y: Y(5.28), 'font-size': 18, fill: css('--ink-2') }, svg);
+  l.textContent = '\u2190 middle of the doughnut';
+}
+
+/* ---------- Chapter 2: parts ---------- */
+let hlState = {};
+function drawParts() {
+  const svg = document.getElementById('svgParts');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '300 -440 330 880');
+  const fill = plasmaGradient(svg, 'pg2');
+  drawWall(svg, 3);
+  el('path', { d: pathD(A.lcfs, true), fill, stroke: css('--plasma'), 'stroke-width': 2, opacity: 0.9 }, svg);
+  if (hlState.lanes) for (const leg of A.legs) el('path', { d: pathD(leg, false), fill: 'none', stroke: css('--case-a'), 'stroke-width': 3.5, 'stroke-linecap': 'round' }, svg);
+  if (hlState.corners) {
+    A.nulls.forEach(p => {
+      const primary = Math.abs(p[1]) < 3;
+      cross(svg, p[0], p[1], primary ? css('--ink') : css('--accent'), 10, 4);
+    });
+    const t1 = el('text', { x: X(3.9) + 16, y: Y(2.2) + 8, 'font-size': 20, 'font-weight': 700, fill: css('--ink') }, svg); t1.textContent = 'corner';
+    const t2 = el('text', { x: X(5.42), y: Y(3.75), 'font-size': 20, 'font-weight': 700, fill: css('--accent') }, svg); t2.textContent = '\u2190 helper corner';
+  }
+  if (hlState.spots) A.strikes.forEach(p => el('circle', { cx: X(p[0]), cy: Y(p[1]), r: 7, fill: css('--bad'), stroke: css('--surface'), 'stroke-width': 2 }, svg));
+}
+function setupParts() {
+  const msgs = {
+    corners: 'Black ✕ = the main corners (X-points). Purple ✕ = the helper corners further out.',
+    lanes: 'Blue lines = the edge of the plasma and the exhaust lanes leading to the wall.',
+    spots: 'Red dots = landing spots, where the exhaust lanes touch the wall.'
+  };
+  document.querySelectorAll('[data-hl]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.hl; hlState[k] = !hlState[k];
+    b.setAttribute('aria-pressed', hlState[k]);
+    document.getElementById('hlInfo').textContent = Object.keys(msgs).filter(x => hlState[x]).map(x => msgs[x]).join(' ');
+    drawParts();
+  }));
+}
+
+/* ---------- Chapter 3: shape ---------- */
+let shapeT = 0, shapeAnim = null;
+function drawShape(t) {
+  const svg = document.getElementById('svgShape');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '310 -260 300 520');
+  const fill = plasmaGradient(svg, 'pg3');
+  drawWall(svg, 3);
+  const got = lerpPts(A.lcfs, B.lcfs, t);
+  const asked = lerpPts(D.requested['0.65'], D.requested['0.60'], t);
+  el('path', { d: pathD(got, true), fill, stroke: css('--plasma'), 'stroke-width': 2.5 }, svg);
+  el('path', { d: pathD(asked, true), fill: 'none', stroke: css('--asked'), 'stroke-width': 3, 'stroke-dasharray': '8 6' }, svg);
+  pin(svg, 3.9, 2.2); pin(svg, 3.9, -2.2);
+}
+function setupShape() {
+  const btns = document.querySelectorAll('[data-ask]');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.setAttribute('aria-pressed', x === b));
+    const c = D.cases[b.dataset.ask];
+    const target = b.dataset.ask === 'B_delta060' ? 1 : 0;
+    document.getElementById('askVal').textContent = c.delta_req.toFixed(2);
+    document.getElementById('gotVal').textContent = c.delta_oft.toFixed(3);
+    const frac = Math.abs(A.delta_oft - B.delta_oft) / Math.abs(A.delta_req - B.delta_req);
+    document.getElementById('gotMeter').style.width = (target ? 100 * frac : 0) + '%';
+    cancelAnimationFrame(shapeAnim);
+    const start = shapeT, t0 = performance.now(), dur = reduceMotion ? 1 : 900;
+    const step = now => {
+      const u = Math.min(1, (now - t0) / dur);
+      shapeT = lerp(start, target, u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+      drawShape(shapeT);
+      if (u < 1) shapeAnim = requestAnimationFrame(step);
+    };
+    shapeAnim = requestAnimationFrame(step);
+  }));
+}
+
+/* ---------- Chapter 4: tug of war ---------- */
+function barRow(container, label, value, vmax, color, suffix) {
+  const row = document.createElement('div'); row.className = 'barrow';
+  const w = 50 * Math.abs(value) / vmax;
+  const left = value >= 0 ? 50 : 50 - w;
+  row.innerHTML = `<div>${label}</div><div class="bartrack" title="${label}: ${value.toFixed(1)}${suffix}"><div class="zero"></div><div class="bar" style="left:${left}%;width:${w}%;background:${color}"></div></div>`;
+  container.appendChild(row);
+}
+function drawTug(caseKey) {
+  const c = D.cases[caseKey];
+  const box = document.getElementById('tugBars');
+  const totals = pairTotals(c);
+  const vmax = Math.max(...['A_baseline', 'B_delta060'].flatMap(k => Object.values(pairTotals(D.cases[k])).map(Math.abs)));
+  if (!box.children.length) {
+    for (const p of Object.keys(totals)) barRow(box, p, totals[p], vmax, css('--pull-zero'), ' MA-turns');
+  }
+  [...box.children].forEach((row, i) => {
+    const p = Object.keys(totals)[i], v = totals[p];
+    const w = 50 * Math.abs(v) / vmax;
+    const bar = row.querySelector('.bar');
+    bar.style.left = (v >= 0 ? 50 : 50 - w) + '%';
+    bar.style.width = w + '%';
+    bar.style.background = v >= 0 ? css('--pull-pos') : css('--pull-neg');
+    row.querySelector('.bartrack').title = `${p}: ${v.toFixed(1)} MA-turns`;
+  });
+}
+function setupTug() {
+  const btns = document.querySelectorAll('[data-tug]');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.setAttribute('aria-pressed', x === b));
+    drawTug(b.dataset.tug);
+  }));
+  drawTug('A_baseline');
+  const box = document.getElementById('cancelBars');
+  const ns = D.null_space, pairs = ns.B_minus_A_by_pair;
+  const vmax = Math.max(ns.whole_coil_set, ...Object.values(pairs));
+  const row = (label, v, color, note) => {
+    const r = document.createElement('div'); r.className = 'barrow';
+    r.innerHTML = `<div>${label}</div><div class="bartrack" title="${note}"><div class="bar" style="left:0;width:${100 * v / vmax}%;background:${color}"></div></div>`;
+    box.appendChild(r);
+  };
+  const h = document.createElement('div'); h.className = 'small'; h.textContent = 'How hard each change alone would push the plasma’s edge:'; box.appendChild(h);
+  for (const p of ['CS1', 'CS2', 'CS3', 'PF1', 'PF2']) row(p, pairs[p], css('--case-b'), `${p} change alone: ${pairs[p].toFixed(1)}`);
+  const h2 = document.createElement('div'); h2.className = 'small'; h2.textContent = 'All the changes together:'; box.appendChild(h2);
+  row('all', ns.B_minus_A_total, css('--good'), `all together: ${ns.B_minus_A_total.toFixed(2)}`);
+  const h3 = document.createElement('div'); h3.className = 'small';
+  h3.innerHTML = `Together they push only <b>${(100 * ns.B_minus_A_total / ns.whole_coil_set).toFixed(0)}%</b> as hard as the whole magnet set does. Almost all of it cancels.`;
+  box.appendChild(h3);
+}
+
+/* ---------- Chapter 5: secondary X-point ---------- */
+function drawSec(cm) {
+  const t = cm / 5;
+  const svg = document.getElementById('svgSec');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '330 -445 275 270');
+  drawWall(svg, 3);
+  const inBox = leg => leg.some(p => p[1] > 1.6);
+  for (const leg of A.legs.filter(inBox)) el('path', { d: pathD(leg, false), fill: 'none', stroke: css('--case-a'), 'stroke-width': 3.5, opacity: (1 - t).toFixed(2), 'stroke-linecap': 'round' }, svg);
+  for (const leg of C.legs.filter(inBox)) el('path', { d: pathD(leg, false), fill: 'none', stroke: css('--case-a'), 'stroke-width': 3.5, opacity: t.toFixed(2), 'stroke-linecap': 'round' }, svg);
+  // strike targets (upper)
+  D.strike_targets.filter(p => p[1] > 0).forEach(p => {
+    el('rect', { x: X(p[0]) - 6, y: Y(p[1]) - 6, width: 12, height: 12, transform: `rotate(45 ${X(p[0])} ${Y(p[1])})`, fill: 'none', stroke: css('--ink'), 'stroke-width': 2.5 }, svg);
+  });
+  // landing spots: blend each A spot with its nearest C spot
+  A.strikes.filter(p => p[1] > 0).forEach(p => {
+    const q = C.strikes.filter(s => s[1] > 0).reduce((best, s) => Math.hypot(s[0] - p[0], s[1] - p[1]) < Math.hypot(best[0] - p[0], best[1] - p[1]) ? s : best);
+    el('circle', { cx: X(lerp(p[0], q[0], t)), cy: Y(lerp(p[1], q[1], t)), r: 6.5, fill: css('--bad'), stroke: css('--surface'), 'stroke-width': 2 }, svg);
+  });
+  cross(svg, 3.9, 2.2, css('--ink'), 8, 3.5);
+  cross(svg, lerp(5.0, 5.05, t), 3.8, css('--accent'), 9, 4);
+  const lab = el('text', { x: X(5.37), y: Y(3.8) + 5, 'font-size': 13, 'font-weight': 700, fill: css('--accent') }, svg);
+  lab.textContent = '\u2190 helper';
+  const lab2 = el('text', { x: X(3.9) + 12, y: Y(2.2) + 18, 'font-size': 13, 'font-weight': 700, fill: css('--ink') }, svg);
+  lab2.textContent = 'main corner';
+  document.getElementById('secVal').textContent = cm.toFixed(1).replace('.0', '');
+  const miss = lerp(A.strike_miss_cm[2], C.strike_miss_cm[2], t);
+  document.getElementById('missVal').textContent = Math.round(miss) + ' cm';
+}
+function setupSec() {
+  const s = document.getElementById('secSlider');
+  s.addEventListener('input', () => drawSec(parseFloat(s.value)));
+  drawSec(0);
+}
+
+/* ---------- Quiz ---------- */
+function setupQuiz() {
+  const explain = {
+    q1: 'Right! Pointiness 0.587 → 0.577: the pinned corners held the shape in place.',
+    q2: 'Yes! The changes cancel where the plasma is, so lots of magnet settings look the same to it.',
+    q3: 'Correct! The outer exhaust lane follows the helper corner, so its landing spot moved about 7 cm.'
+  };
+  document.querySelectorAll('#quiz fieldset').forEach(fs => {
+    fs.addEventListener('change', e => {
+      const fb = fs.querySelector('.feedback');
+      const ok = e.target.value === fs.dataset.answer;
+      fb.className = 'feedback ' + (ok ? 'ok' : 'no');
+      fb.textContent = ok ? explain[e.target.name] : 'Not quite. Have another look at the chapter above and try again!';
+    });
+  });
+}
+
+/* ---------- Numbers table ---------- */
+function setupTable() {
+  const rows = [
+    ['', 'A: start (asked 0.65)', 'B: asked 0.60', 'C: helper corner +5 cm'],
+    ['Converged (iterations)', ...[A, B, C].map(c => c.converged ? `yes (${c.its})` : 'no')],
+    ['Triangularity δ, TokaMaker', ...[A, B, C].map(c => c.delta_oft.toFixed(3))],
+    ['Triangularity δ, from traced boundary', ...[A, B, C].map(c => c.delta_boundary.toFixed(3))],
+    ['Elongation κ', ...[A, B, C].map(c => c.kappa.toFixed(3))],
+    ['q95', ...[A, B, C].map(c => c.q95.toFixed(2))],
+    ['Strike-point misses: inner U/L, outer U/L [cm]', ...[A, B, C].map(c => c.strike_miss_cm.map(v => v.toFixed(1)).join(' / '))],
+    ['CS3U current [MA-turns]', ...[A, B, C].map(c => c.coil_MAt.CS3U.toFixed(1))],
+    ['PF1U current [MA-turns]', ...[A, B, C].map(c => c.coil_MAt.PF1U.toFixed(1))],
+    ['Edge push of coil change vs A [Wb/rad]', '—', D.null_space.B_minus_A_total.toFixed(2), D.null_space.C_minus_A_total.toFixed(3)],
+  ];
+  const tbl = document.getElementById('numTable');
+  tbl.innerHTML = rows.map((r, i) => '<tr>' + r.map(c => i ? `<td>${c}</td>` : `<th>${c}</th>`).join('') + '</tr>').join('');
+}
+
+/* ---------- Theme ---------- */
+function redrawAll() {
+  drawMachine(); drawParts(); drawShape(shapeT);
+  const tugOn = document.querySelector('[data-tug][aria-pressed="true"]');
+  drawTug(tugOn ? tugOn.dataset.tug : 'A_baseline');
+  drawSec(parseFloat(document.getElementById('secSlider').value));
+  document.querySelectorAll('#cancelBars').forEach(b => { b.innerHTML = ''; });
+  setupCancelOnly();
+}
+function setupCancelOnly() { /* rebuilt in setupTug on first load; colours refresh here */
+  const box = document.getElementById('cancelBars');
+  if (box.children.length) return;
+  const ns = D.null_space, pairs = ns.B_minus_A_by_pair;
+  const vmax = Math.max(ns.whole_coil_set, ...Object.values(pairs));
+  const add = (html) => { const d = document.createElement('div'); d.className = 'small'; d.innerHTML = html; box.appendChild(d); };
+  const row = (label, v, color) => {
+    const r = document.createElement('div'); r.className = 'barrow';
+    r.innerHTML = `<div>${label}</div><div class="bartrack"><div class="bar" style="left:0;width:${100 * v / vmax}%;background:${color}"></div></div>`;
+    box.appendChild(r);
+  };
+  add('How hard each change alone would push the plasma’s edge:');
+  for (const p of ['CS1', 'CS2', 'CS3', 'PF1', 'PF2']) row(p, pairs[p], css('--case-b'));
+  add('All the changes together:');
+  row('all', ns.B_minus_A_total, css('--good'));
+  add(`Together they push only <b>${(100 * ns.B_minus_A_total / ns.whole_coil_set).toFixed(0)}%</b> as hard as the whole magnet set does. Almost all of it cancels.`);
+}
+function setupTheme() {
+  const btn = document.getElementById('themeBtn');
+  let stored = null;
+  try { stored = localStorage.getItem('guide-theme'); } catch (e) { /* storage unavailable */ }
+  if (stored) document.documentElement.setAttribute('data-theme', stored);
+  btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('guide-theme', next); } catch (e) { /* storage unavailable */ }
+    redrawAll();
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawAll);
+}
+
+setupTheme();
+drawMachine();
+setupParts(); drawParts();
+setupShape(); drawShape(0);
+setupTug();
+setupSec();
+setupQuiz();
+setupTable();
+</script>
+</body>
+</html>
