@@ -6,9 +6,14 @@ self-contained HTML file with no external dependencies, so it works offline.
 
 Usage (from the repo root, after shape_study.py and coil_null_space.py have run):
     .venv/bin/python scripts/arc_shape_targets/make_guide.py
+    .venv/bin/python scripts/arc_shape_targets/make_guide.py --hosted PATH   # also write a copy for a
+                                                                              # host that adds its own
+                                                                              # <html>/<head>/<body>
 """
+import argparse
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -109,7 +114,7 @@ def requested_outline(delta):
     return resample_closed(pts, 180)
 
 
-def main():
+def main(hosted=None):
     recs = {n: load(n) for n in CASES}
     arrs = {n: np.load(os.path.join(ARR, f'{n}.npz'), allow_pickle=True) for n in CASES}
     lim = np.asarray(arrs['A_baseline']['lim'])
@@ -159,7 +164,15 @@ def main():
     with open(OUT, 'w') as fh:
         fh.write(html)
     print(f'wrote {OUT} ({os.path.getsize(OUT)/1024:.0f} kB)')
+    if hosted:
+        body = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*|'
+                      r'<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', html)
+        with open(hosted, 'w') as fh:
+            fh.write(body)
+        print(f'wrote {hosted}')
 
 
 if __name__ == '__main__':
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--hosted', help='also write a copy without <html>/<head>/<body> wrappers')
+    main(ap.parse_args().hosted)

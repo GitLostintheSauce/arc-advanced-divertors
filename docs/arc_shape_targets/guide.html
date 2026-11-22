@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shaping a Star</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="A picture guide to our ARC V3A magnet-shape experiments, for anyone age 10 and up.">
 <style>
 :root {
@@ -68,7 +69,8 @@ body {
   margin: 0; background: var(--bg); color: var(--ink);
   font: 18px/1.6 ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 80px; }
+main { max-width: 1080px; margin: 0 auto; padding-block: 24px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1 { font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.1; margin: 0.4em 0 0.2em; letter-spacing: -0.02em; }
 h2 { font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.2; margin: 0 0 0.4em; letter-spacing: -0.01em; }
 h3 { font-size: 1.15rem; margin: 1.2em 0 0.3em; }
@@ -353,7 +355,7 @@ footer { color: var(--ink-3); font-size: 0.85rem; margin-top: 40px; }
     <div class="kicker">For grown-ups</div>
     <h2>The real numbers</h2>
     <p>Static free-boundary TokaMaker equilibria (OFT 26.9) with fixed plasma profiles. Ip = 12 MA. Each case
-    changes one input from the baseline. Full write-up: <a href="REPORT.md">REPORT.md</a>.</p>
+    changes one input from the baseline. Full write-up: <a href="https://github.com/GitLostintheSauce/arc-advanced-divertors/blob/main/docs/arc_shape_targets/REPORT.md">the report on GitHub</a>.</p>
     <div class="tablewrap"><table id="numTable"></table></div>
     <p class="small">"Pointiness" is triangularity δ as reported by TokaMaker's <code>get_stats</code>. Magnet
     currents are total MA-turns. "Edge push" is the spread of coil-only vacuum flux along the boundary targets
@@ -691,6 +693,8 @@ function setupTheme() {
     redrawAll();
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawAll);
+  // A host page may switch the theme by setting data-theme; redraw the diagrams in the new colours.
+  new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
 
 setupTheme();
