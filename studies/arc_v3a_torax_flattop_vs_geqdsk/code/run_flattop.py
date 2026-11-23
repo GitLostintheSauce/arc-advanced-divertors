@@ -14,18 +14,27 @@ PATCHES below:
 The mesh is the public OFT ARC V3A mesh, copied from the OFT fork. It is byte-identical to the
 ARC_V3A_mesh.h5 the notebook would download.
 
-Writes to work/arc_v3a_torax_flattop_vs_geqdsk/ (gitignored):
-    run/TMTX_..._executed.ipynb     the executed notebook
-    run/extract/tmtx_flattop_final.geqdsk   final TokaMaker equilibrium, same grid as the Zenodo file
-    run/extract/tmtx_flattop.json           TokaMaker stats, X-points, coil currents, TM+TX state,
-                                            TORAX final scalars and profiles
+Cases (--case):
+  baseline            the notebook as published: targets only for the two main X-points
+  secondary_xpoints   the same, plus saddle (null) targets for secondary X-points at
+                      SECONDARY_X_POINTS = (4.93, +/-3.64) m, where the public ARC V3A gEQDSK has its
+                      outer-divertor nulls. Added to the seed equilibrium and to the coupled loop
+                      (set_diverted_shape_targets(secondary_x_point_targets=...), weight = the main
+                      X-point weight). Nothing else changes.
+
+Writes to work/arc_v3a_torax_flattop_vs_geqdsk/<run dir>/ (gitignored; run/ for baseline,
+run_secondary_xpoints/ for the second case):
+    TMTX_..._executed.ipynb     the executed notebook
+    extract/tmtx_flattop_final.geqdsk   final TokaMaker equilibrium, same grid as the Zenodo file
+    extract/tmtx_flattop.json           TokaMaker stats, X-points, coil currents, TM+TX state,
+                                        TORAX final scalars and profiles
 
 Needs an environment installed from requirements-lock.txt (OFT 26.9 with TORAX 1.4.0): OFT 26.9's
 TokaMaker+TORAX workflow does not import under TORAX 1.3.x. The script checks this first.
 
 Usage (from the repo root; takes several minutes):
     PYTHON=.venv/bin/python   # any venv installed from requirements-lock.txt
-    $PYTHON studies/arc_v3a_torax_flattop_vs_geqdsk/code/run_flattop.py [--oft-root PATH]
+    $PYTHON studies/arc_v3a_torax_flattop_vs_geqdsk/code/run_flattop.py [--case secondary_xpoints] [--oft-root PATH]
 """
 import argparse
 import hashlib
@@ -40,14 +49,27 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 STUDY = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(STUDY))
 SCRATCH = os.path.join(REPO, 'work', 'arc_v3a_torax_flattop_vs_geqdsk')
-RUN_DIR = os.path.join(SCRATCH, 'run')
-EXTRACT_DIR = os.path.join(RUN_DIR, 'extract')
+RUN_DIRS = {'baseline': os.path.join(SCRATCH, 'run'),
+            'secondary_xpoints': os.path.join(SCRATCH, 'run_secondary_xpoints')}
+# Outer-divertor nulls of the public ARC V3A gEQDSK (found by compare_to_geqdsk.py)
+SECONDARY_X_POINTS = [[4.93, 3.64], [4.93, -3.64]]
 
 FS_COMMIT = 'bf5e8d11a0d0146e4755ad53f37d74667fe0c177'
 NB_NAME = 'TMTX_project_parts_1_2_ARC_V3A_flattop_v1.ipynb'
 NB_URL = f'https://raw.githubusercontent.com/fs2819/TokaMaker_TORAX_project/{FS_COMMIT}/ARC_V3A/{NB_NAME}'
 NB_SHA256 = '7c36ac9670a75016a450a3e40c13e3880172212a9cfb5f5dcc96bd27a6483763'
 MESH_SHA256 = 'df0eada3ea0bc2503921c736705194d90ed83c3a0d1c25deddc26fcf36c99967'
+
+# Extra patches for the secondary_xpoints case (same format as PATCHES).
+SECONDARY_PATCHES = [
+    ("mygs.set_saddle_constraints(X_POINTS, weights=np.full(X_POINTS.shape[0], SADDLE_WEIGHT))",
+     "mygs.set_saddle_constraints(X_POINTS, weights=np.full(X_POINTS.shape[0], SADDLE_WEIGHT))",
+     "SECONDARY_X_POINTS = np.array(" + repr(SECONDARY_X_POINTS) + ")  # [patched] outer-divertor nulls\n"
+     "mygs.set_saddle_constraints(np.vstack([X_POINTS, SECONDARY_X_POINTS]),\n"
+     "                            weights=np.full(X_POINTS.shape[0] + SECONDARY_X_POINTS.shape[0], SADDLE_WEIGHT))"),
+    ("    x_point_weight=100,", "    x_point_weight=100,",
+     "    x_point_weight=100,\n    secondary_x_point_targets=SECONDARY_X_POINTS,  # [patched]"),
+]
 
 # (marker that identifies the cell, old text, new text). old=None replaces the whole cell.
 PATCHES = [
@@ -123,6 +145,7 @@ for _name in ['n_e', 'n_i', 'T_e', 'T_i', 'q', 'magnetic_shear', 'pressure_therm
 
 _res = {
     'notebook_commit': os.environ.get('FS_COMMIT'),
+    'case': os.environ.get('TMTX_CASE'),
     'tm_stats': _clean(_stats),
     'tm_diverted': bool(_div),
     'tm_x_points': _clean(_xp) if _xp is not None else [],
@@ -150,7 +173,10 @@ def sha256(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--oft-root', default=os.path.expanduser('~/Documents/code/OpenFUSIONToolkit'))
+    ap.add_argument('--case', choices=list(RUN_DIRS), default='baseline')
     args = ap.parse_args()
+    RUN_DIR = RUN_DIRS[args.case]
+    EXTRACT_DIR = os.path.join(RUN_DIR, 'extract')
     import torax
     if not torax.__version__.startswith('1.4'):
         raise SystemExit(f'TORAX {torax.__version__} found; this run needs TORAX 1.4.x (install requirements-lock.txt)')
@@ -167,7 +193,7 @@ def main():
         raise RuntimeError(f'{mesh} does not match the public ARC V3A mesh')
 
     nb = nbformat.read(nb_path, as_version=4)
-    for marker, old, new in PATCHES:
+    for marker, old, new in PATCHES + (SECONDARY_PATCHES if args.case == 'secondary_xpoints' else []):
         cells = [c for c in nb.cells if c.cell_type == 'code' and marker in c.source]
         if len(cells) != 1:
             raise RuntimeError(f'patch marker {marker!r} matched {len(cells)} cells')
@@ -178,6 +204,7 @@ def main():
 
     os.environ['TMTX_EXTRACT_DIR'] = EXTRACT_DIR
     os.environ['FS_COMMIT'] = FS_COMMIT
+    os.environ['TMTX_CASE'] = args.case
     client = NotebookClient(nb, timeout=-1, kernel_name='python3', resources={'metadata': {'path': RUN_DIR}})
     try:
         client.execute()

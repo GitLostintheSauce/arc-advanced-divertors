@@ -7,6 +7,11 @@ the profiles and the shape.
 - **[REPORT.md](REPORT.md)**: results, what they mean, open questions.
 - **[results/comparison_table.md](results/comparison_table.md)**: every number side by side.
 
+Two TM+TX cases are compared with the gEQDSK:
+- **TM+TX:** the notebook as published, with targets for the two main X-points only.
+- **TM+TX + secondary X-pts:** the same, plus null targets at the gEQDSK's outer-divertor nulls,
+  (4.93, ±3.64) m.
+
 ## The two equilibria
 
 | | Public gEQDSK | TokaMaker+TORAX flattop |
@@ -45,6 +50,7 @@ The repo stays on 1.4.0 for now. With 1.4.3, the ITER TokaMaker+TORAX example st
 python3.12 -m venv work/venv_torax143
 work/venv_torax143/bin/pip install -r studies/arc_v3a_torax_flattop_vs_geqdsk/requirements-lock-torax143.txt
 work/venv_torax143/bin/python studies/arc_v3a_torax_flattop_vs_geqdsk/code/run_flattop.py      # ~4 min
+work/venv_torax143/bin/python studies/arc_v3a_torax_flattop_vs_geqdsk/code/run_flattop.py --case secondary_xpoints   # ~5 min
 work/venv_torax143/bin/python studies/arc_v3a_torax_flattop_vs_geqdsk/code/compare_to_geqdsk.py
 ```
 
@@ -61,5 +67,6 @@ TORAX's results vary slightly from run to run, so rerun numbers can differ in th
 | `figures/separatrix_tmtx_vs_geqdsk.png` | ψ̂ = 1 contours, X-points and axis of both, full view and upper-divertor zoom |
 | `figures/profiles_tmtx_vs_geqdsk.png` | p, q, FF′ and p′ against normalized poloidal flux |
 | `figures/torax_final_profiles.png` | TORAX's density, temperature and current profiles (the gEQDSK has none of these) |
+| `figures/coil_currents_tmtx_cases.png` | Coil currents of the two TM+TX runs against the ±50 MA-turn bound |
 | `code/run_flattop.py`, `code/compare_to_geqdsk.py` | The two steps above |
 | `requirements-lock-torax143.txt` | The environment this study needs |
