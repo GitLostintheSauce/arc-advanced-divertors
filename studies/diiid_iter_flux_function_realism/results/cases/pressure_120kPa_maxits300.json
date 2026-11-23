@@ -1,0 +1,23 @@
+{
+ "case": "pressure_120kPa_maxits300",
+ "scan_case": "pressure_120kPa",
+ "machine": "DIII-D",
+ "inputs": {
+  "Ip": 500000.0,
+  "pax": 120000.0,
+  "ffp": [
+   1.5,
+   2.0
+  ],
+  "pp": [
+   4.0,
+   1.0
+  ],
+  "profiles": "power"
+ },
+ "Ip_target": 500000.0,
+ "pax_target": 120000.0,
+ "maxits": 300,
+ "converged": false,
+ "error": "Error in solve: Matrix solve failed for targets         "
+}

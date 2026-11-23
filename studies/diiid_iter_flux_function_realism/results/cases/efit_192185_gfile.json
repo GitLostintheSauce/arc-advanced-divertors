@@ -1,0 +1,21 @@
+{
+ "case": "efit_192185_gfile",
+ "machine": "DIII-D",
+ "source": "g192185.02440 (EFIT01)",
+ "Ip": 493324.5,
+ "P_ax": 6831.64208,
+ "q_0": 0.835620165,
+ "q_95": 5.484467793999999,
+ "q_min": 0.835620165,
+ "psi_axis_gfile": -0.245078847,
+ "psi_lcfs_gfile": -0.0642335564,
+ "ffp_axis": 4.2831893,
+ "ffp_edge": 0.0944990441,
+ "ffp_min": 0.0248521828,
+ "ffp_zero_crossings": [],
+ "pp_axis": 55701.8398,
+ "pp_edge": 19850.4981,
+ "pp_argmax_psi": 0.0,
+ "pp_edge_peak_over_core_peak": 0.44688099691816646,
+ "pp_zero_crossings": []
+}
