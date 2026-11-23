@@ -1,0 +1,49 @@
+{
+ "q95_vs_Ip_loglog_slope": -1.0220064920655705,
+ "beta_p_vs_Ip_loglog_slope": -1.9933907706374825,
+ "q95_times_Ip_MA": {
+  "current_minus20pct": 27.7235876560354,
+  "current_minus10pct": 27.624973289776594,
+  "baseline": 27.557476175831056,
+  "current_plus10pct": 27.510827142601443,
+  "current_plus20pct": 27.476190254445182
+ },
+ "l_i_range_Ip_scan": [
+  1.2684639074945958,
+  1.2975355126156065
+ ],
+ "dq95_dkappa": 2.5976871366401033,
+ "ddelta_dRx_per_cm": -0.015266982114830551,
+ "beta_p_ratio_pressure_cases": {
+  "pressure_minus20pct": 0.8004222850167733,
+  "pressure_plus20pct": 1.1988214695966422
+ },
+ "baseline_deltaU_minus_deltaL": 0.03870174387825576,
+ "coil_effort_MAturns": {
+  "baseline": 77.01946082825957,
+  "current_minus20pct": 60.191027087782395,
+  "current_minus10pct": 68.65171836893194,
+  "current_plus10pct": 85.32017991047005,
+  "current_plus20pct": 93.57112935553438,
+  "elongation_minus5pct": 87.32024065663558,
+  "elongation_plus5pct": 68.65713167004063,
+  "xpoints_inward_5cm": 75.32244521153748,
+  "xpoints_outward_5cm": 77.46796056069965
+ },
+ "iterations": {
+  "baseline": 20,
+  "current_minus20pct": 19,
+  "current_minus10pct": 19,
+  "current_plus10pct": 20,
+  "current_plus20pct": 20,
+  "pressure_minus20pct": 20,
+  "pressure_plus20pct": 20,
+  "xpoints_inward_5cm": 20,
+  "xpoints_outward_5cm": 19,
+  "xpoints_toward_midplane_5cm": 22,
+  "xpoints_away_from_midplane_5cm": 20,
+  "upper_xpoint_up_5cm": 20,
+  "elongation_minus5pct": 19,
+  "elongation_plus5pct": 21
+ }
+}

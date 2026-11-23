@@ -5,7 +5,7 @@
 
   arc    Read work/arcv3a_baseline/executed.ipynb (from run_arcv3a_baseline.py) and check
          the equilibrium is diverted with Ip = 12 MA and |q95| close to 3.38.
-  sparc  Compare every sparc/static_scan/results/*.json against the committed copy in
+  sparc  Compare every studies/sparc_current_pressure_and_shape/results/*.json against the committed copy in
          git HEAD, number by number, within a relative tolerance.
   iter   Read the executed OFT ITER TokaMaker+TORAX pulse example (from run_oft_examples.py)
          and check each coupling pass's L-H time and flux consumption against the reference
@@ -27,7 +27,7 @@ import nbformat
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARC_NOTEBOOK = os.path.join(REPO_ROOT, 'work', 'arcv3a_baseline', 'executed.ipynb')
-SPARC_RESULTS = os.path.join('sparc', 'static_scan', 'results')
+SPARC_RESULTS = os.path.join('studies', 'sparc_current_pressure_and_shape', 'results')
 ITER_NOTEBOOK = os.path.join(REPO_ROOT, 'work', 'examples', 'AdvancedWorkflows', 'Pulse_Design', 'TokaMaker_TORAX',
                              'ITER', 'ITER_TokaMaker_TORAX_pulse_ex_executed.ipynb')
 # Reference run, one entry per coupling pass: L-H time [s], TORAX flux consumption [Wb].

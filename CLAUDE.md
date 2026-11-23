@@ -13,7 +13,8 @@ Study: advanced divertor configurations (XPT, super-X, X-divertor, snowflake) on
 
 | Kind of work | Location |
 |---|---|
-| ARC-specific scans, configs, figures, paper | This repo: `scripts/`, `configs/`, `figures/`, `notebooks/`, `docs/` |
+| A study (a scan or experiment with its own question and results) | This repo: `studies/<machine>_<what is varied>/`, for example `studies/arc_v3a_triangularity_and_secondary_xpoint/`. One folder per study holding `README.md` (question, inputs, how to rerun), `REPORT.md`, `code/`, `results/` (JSON, tables) and `figures/`. Scratch output goes to `work/<same name>/` |
+| Repo-wide scripts, configs, paper | This repo: `scripts/` (install check, example runner, CI checks), `configs/`, `figures/` (install-check plot only), `notebooks/`, `docs/` |
 | Reusable tools another tokamak could use (divertor metrics, coil limits, pulse example) | OFT fork at `~/Documents/code/OpenFUSIONToolkit`. One branch per tool, each a small PR to upstream OFT |
 | TORAX | Used as is, pinned. No changes |
 
@@ -25,12 +26,13 @@ The OFT fork has two remotes: `origin` is `GitLostintheSauce/OpenFUSIONToolkit` 
 - Pins are in `requirements.txt` (top level) and `requirements-lock.txt` (full `pip freeze`). Regenerate the lock file whenever the environment changes.
 - `OpenFUSIONToolkit==26.9` (PyPI wheel), `torax==1.4.0`, `jax==0.10.0`, `jaxlib==0.10.0`, `fusion_surrogates==0.4.6`, `pydantic==2.12.5`, `pydantic_core==2.41.5`, `eqdsk==0.7.0`, `tqdm==4.67.3`, `xarray==2026.2.0`. OFT 26.9's `TokaMaker.pulse_design` needs TORAX >= 1.4.0 (it imports `ConfinementMode`), so these pins intentionally differ from `requirements_TokaMaker_TORAX.txt` in OFT, which still lists `torax==1.3.1`.
 - The lock file must stay installable on Linux and macOS: mark platform-only packages with environment markers (e.g. `appnope ... ; sys_platform == "darwin"`).
-- CI (`.github/workflows/ci.yml`) runs on Linux x86_64 by default and on macOS arm64. It installs the lock file and runs the ARC V3A baseline, the SPARC static scan, the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example. Use it to test environment changes.
+- CI (`.github/workflows/ci.yml`) runs on Linux x86_64 by default and on macOS arm64. It installs the lock file and runs the ARC V3A baseline, the SPARC study (`studies/sparc_current_pressure_and_shape/`), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example. Use it to test environment changes.
 - OFT examples and the ARC mesh are read from the fork at commit `8fc4afe`.
 - Only one `OFT_env`/`TokaMaker` instance can exist per Python process. For scans, run each case in its own process.
 
 ## Conventions
 
-- Every figure in `figures/` must be reproducible from a script or notebook in this repo.
+- Every figure in `figures/` or in a study's `figures/` must be reproducible from a script or notebook in this repo.
+- Name study folders, scripts, cases and output files for what they contain (`run_equilibria.py`, `B_delta060`, `coil_currents_by_case.md`), not with abbreviations.
 - Scripts write scratch output to `work/` (gitignored). Downloaded inputs such as `geqdsk-*` are gitignored and fetched from Zenodo on demand.
 - Sanity check: `python scripts/run_arcv3a_baseline.py` should converge and regenerate `figures/arcv3a_baseline_equilibrium.png`.

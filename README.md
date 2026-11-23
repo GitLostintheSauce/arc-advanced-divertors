@@ -8,20 +8,21 @@ The plan, timeline and code-flow rules are in the [roadmap](docs/roadmap.md).
 
 | Folder | What goes here |
 |---|---|
+| `studies/` | One folder per study, named for what it studies (for example `arc_v3a_triangularity_and_secondary_xpoint`). Each holds its own `README.md`, `REPORT.md`, `code/`, `results/` and `figures/`. See [studies/README.md](studies/README.md) |
 | `notebooks/` | Exploratory and figure-making notebooks for this study |
-| `scripts/` | Runnable scripts: scans, batch runs, figure regeneration |
+| `scripts/` | Repo-wide scripts: install check, OFT example runner, CI checks |
 | `configs/` | Scan definitions, coil/shape targets and other inputs. Public ARC V3A data only (see below) |
-| `figures/` | Generated plots. Each one should be reproducible from a script or notebook here |
+| `figures/` | Repo-wide plots (the install-check equilibrium). Study figures live in each study's `figures/` |
 | `docs/` | Roadmap, notes and paper drafts |
 
 Reusable tools (for example divertor metrics or coil-limit checks that another tokamak could use) do **not** live here. They go to the [OFT fork](https://github.com/GitLostintheSauce/OpenFUSIONToolkit) on their own branch and then go upstream to OpenFUSIONToolkit as small PRs.
 
 ## Results so far
 
-- [ARC V3A shape-target study](docs/arc_shape_targets/README.md): static TokaMaker equilibria
-  testing whether the coils can change triangularity, or move a secondary X-point, while holding the
-  other divertor targets. Includes a [report](docs/arc_shape_targets/REPORT.md) and an interactive
-  [picture guide](docs/arc_shape_targets/guide.html) for non-specialists.
+| Study | What it asks |
+|---|---|
+| [ARC V3A: triangularity and secondary X-point](studies/arc_v3a_triangularity_and_secondary_xpoint/README.md) | Can the coils change triangularity, or move a secondary X-point, while holding the other divertor targets? Includes a [report](studies/arc_v3a_triangularity_and_secondary_xpoint/REPORT.md) and an interactive [picture guide](studies/arc_v3a_triangularity_and_secondary_xpoint/picture_guide.html) |
+| [SPARC: current, pressure and shape](studies/sparc_current_pressure_and_shape/README.md) | How does a SPARC equilibrium respond when plasma current, pressure, X-point position or elongation changes one at a time? Includes a [report](studies/sparc_current_pressure_and_shape/REPORT.md) and a [secondary-null follow-up](studies/sparc_current_pressure_and_shape/SECONDARY_NULLS_REPORT.md) |
 
 ## Data
 
@@ -49,7 +50,7 @@ pip install -r requirements-lock.txt
 
 Do not upgrade TORAX casually: the TokaMaker+TORAX workflow imports TORAX internals. OFT 26.9 needs TORAX 1.4.0 or later (`TokaMaker.pulse_design` imports `ConfinementMode`), even though OFT's `requirements_TokaMaker_TORAX.txt` still lists 1.3.1.
 
-The lock file installs on Linux and macOS. CI (`.github/workflows/ci.yml`) installs it on Linux x86_64 (the default platform) and on macOS arm64, and runs the ARC V3A baseline, the SPARC static scan (checked against the committed results), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example (checked against the [reference run](notebooks/iter_tokamaker_torax_reference/README.md)).
+The lock file installs on Linux and macOS. CI (`.github/workflows/ci.yml`) installs it on Linux x86_64 (the default platform) and on macOS arm64, and runs the ARC V3A baseline, the [SPARC current, pressure and shape study](studies/sparc_current_pressure_and_shape/README.md) (checked against the committed results), the TokaMaker learning examples and the ITER TokaMaker+TORAX pulse example (checked against the [reference run](notebooks/iter_tokamaker_torax_reference/README.md)).
 
 ## Check the install
 

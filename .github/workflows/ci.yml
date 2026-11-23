@@ -62,8 +62,8 @@ jobs:
 
       - name: SPARC static scan
         run: |
-          .venv/bin/python sparc/static_scan/sparc_static_scan.py
-          .venv/bin/python sparc/static_scan/analyze_scan.py
+          .venv/bin/python studies/sparc_current_pressure_and_shape/code/run_equilibria.py
+          .venv/bin/python studies/sparc_current_pressure_and_shape/code/fit_scalings.py
           .venv/bin/python scripts/check_ci_results.py sparc --rtol ${{ matrix.sparc_rtol }}
 
       - name: TokaMaker learning examples
@@ -81,7 +81,8 @@ jobs:
           name: ci-outputs-${{ matrix.os }}
           path: |
             figures/
-            sparc/static_scan/results/
+            studies/*/results/
+            studies/*/figures/
             work/**/*.png
             work/**/*executed.ipynb
           if-no-files-found: ignore
