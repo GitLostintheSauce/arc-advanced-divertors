@@ -29,6 +29,11 @@ free-boundary TokaMaker equilibria with fixed plasma profiles; there is no TORAX
 | `A_baseline_delta065_4threads` | same, run on 4 threads (reproducibility check only) |
 | `B_delta060` | requested δ = 0.60 |
 | `C_secondary_xpoint_out_5cm` | secondary X-point targets R = 5.00 → 5.05 m |
+| `D_delta065_xpoints_R3863` | requested δ = 0.65 with the primary X-points moved to R = 3.863 m, the R that δ implies |
+| `E_delta060_xpoints_R3921` | requested δ = 0.60 with the primary X-points moved to R = 3.921 m, the R that δ implies |
+
+D and E were added after A–C showed that pinned X-points absorb the δ change (Experiment 3 in the
+report). The X-point R comes from the notebook's own `xpoints_from_moments` for each δ; Z stays at ±2.2 m.
 
 ## Files
 
@@ -41,9 +46,11 @@ free-boundary TokaMaker equilibria with fixed plasma profiles; there is no TORAX
 | `results/coil_cancellation_check.json` | Vacuum-field check of how "visible" the coil-current changes are at the plasma |
 | `figures/A_vs_B_triangularity_separatrix.png` | Experiment 1: separatrix for δ 0.65 vs 0.60, full view and divertor zoom |
 | `figures/A_vs_C_secondary_xpoint_separatrix.png` | Experiment 2: separatrix with the secondary X-points at R = 5.00 vs 5.05 m |
+| `results/delta_with_xpoints_moved.md` / `.json` | Experiment 3: A/B (X-points pinned) vs D/E (X-points moved with δ) |
+| `figures/D_vs_E_triangularity_with_xpoints_moved.png` | Experiment 3: separatrix for δ 0.65 vs 0.60 with the X-points moved |
 | `figures/coil_currents_by_case.png` | Coil currents by coil, all three cases |
 | `figures/<case>_equilibrium.png` | Each equilibrium in the original notebook's plot style |
-| `code/` | `run_equilibria.py` (runs the cases), `make_figures_and_tables.py`, `check_coil_cancellation.py`, `build_picture_guide.py` (+ `picture_guide_template.html`) |
+| `code/` | `run_equilibria.py` (runs the cases), `make_figures_and_tables.py`, `compare_delta_with_xpoints_moved.py`, `check_coil_cancellation.py`, `build_picture_guide.py` (+ `picture_guide_template.html`) |
 
 `A_baseline_delta065_4threads.json` changes in its last digits each time it is rerun, because multi-threaded OFT is not
 bit-reproducible. All other results repeat exactly.
@@ -54,7 +61,8 @@ From the repo root, with the repo's `.venv` (OFT 26.9) and the OFT fork at
 `~/Documents/code/OpenFUSIONToolkit` (or pass `--oft-root PATH`):
 
 ```
-.venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/run_equilibria.py       # 4 cases + figures + tables, ~30 s
+.venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/run_equilibria.py       # 6 cases + figures + tables, ~45 s
+.venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/compare_delta_with_xpoints_moved.py   # Experiment 3 table + figure
 .venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/check_coil_cancellation.py   # coil diagnostic, ~10 s
 .venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/build_picture_guide.py        # rebuild picture_guide.html from the results
 ```

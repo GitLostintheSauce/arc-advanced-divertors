@@ -8,6 +8,12 @@ unchanged logic) as a script, then changes ONE input per case:
     A_baseline_delta065_4threads   same, nthreads = 4 (as the notebook ran it; reproducibility check)
     B_delta060                     delta = 0.60
     C_secondary_xpoint_out_5cm     secondary X-point targets moved from R = 5.00 to 5.05 m
+    D_delta065_xpoints_R3863       delta = 0.65 AND primary X-points moved to the R that delta implies
+    E_delta060_xpoints_R3921       delta = 0.60 AND primary X-points moved to the R that delta implies
+
+D and E move the primary X-point targets (and their isoflux points) to the R given by the
+notebook's own xpoints_from_moments for that delta: 3.86275 m (0.65) and 3.921 m (0.60). Z stays at
++/-2.2 m, so kappa and everything else are as in A and B.
 
 The notebook is not modified. Its unused imports (omfit_classes, ipywidgets) and the
 interactive strike-point picker are left out; they do not affect the equilibrium.
@@ -69,11 +75,14 @@ CASES = {
     'A_baseline_delta065_4threads': {'nthreads': 4},
     'B_delta060':      {'delta': 0.60},
     'C_secondary_xpoint_out_5cm':       {'secondary_x_points': [[5.05, 3.8], [5.05, -3.8]]},
+    'D_delta065_xpoints_R3863': {'delta': 0.65, 'primary_x_points': [[3.86275, 2.2], [3.86275, -2.2]]},
+    'E_delta060_xpoints_R3921': {'delta': 0.60, 'primary_x_points': [[3.921, 2.2], [3.921, -2.2]]},
 }
 # Cases compared in the figures/tables (A_baseline_delta065_4threads is only a reproducibility check)
 MAIN = ['A_baseline_delta065', 'B_delta060', 'C_secondary_xpoint_out_5cm']
 LABEL = {'A_baseline_delta065': 'A: baseline (δ=0.65)', 'B_delta060': 'B: δ=0.60',
-         'C_secondary_xpoint_out_5cm': 'C: secondary X R+5 cm', 'A_baseline_delta065_4threads': 'A (4 threads)'}
+         'C_secondary_xpoint_out_5cm': 'C: secondary X R+5 cm', 'A_baseline_delta065_4threads': 'A (4 threads)',
+         'D_delta065_xpoints_R3863': 'D: δ=0.65, X at R=3.863', 'E_delta060_xpoints_R3921': 'E: δ=0.60, X at R=3.921'}
 
 
 def build_min_norm_coil_reg(mygs):

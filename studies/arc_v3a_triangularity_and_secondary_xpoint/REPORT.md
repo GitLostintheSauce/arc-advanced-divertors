@@ -108,6 +108,41 @@ outer strike points shift about 7 cm up and out along the wall, and their misses
 and CS2 (−11). This change adds about 0.02 T at the secondary X-points and almost nothing (0.0002 T) at
 the primaries, so it acts where it should. It still involves some cancellation between coils.
 
+### Experiment 3: triangularity 0.65 → 0.60 with the X-points moved too
+
+*Added after Experiment 1.* Cases D and E repeat A and B, but the primary X-point targets move to the
+R that each δ implies (the notebook's `xpoints_from_moments`): 3.863 m for 0.65 and 3.921 m for 0.60, a
+5.8 cm shift. Z stays at ±2.2 m and everything else is as in A and B. Both converged, diverted, with all
+four nulls within 0.1 mm of their targets. Full table: [results/delta_with_xpoints_moved.md](results/delta_with_xpoints_moved.md).
+
+![D vs E](figures/D_vs_E_triangularity_with_xpoints_moved.png)
+
+| | A → B (X pinned at 3.90) | D → E (X moved 3.863 → 3.921) |
+|---|---|---|
+| δ change (OFT / from boundary) | −0.011 / −0.016 | **−0.044 / −0.048** |
+| δ achieved (OFT) | 0.587 → 0.577 | 0.611 → 0.568 |
+| κ, worst shape-point \|ψ̂−1\| | unchanged; 0.035 → 0.043 | unchanged; 0.035 → 0.042 |
+| inner strike miss (U/L) | 2.7/2.2 → 8.7/9.3 cm | 7.9/7.0 → 7.6/8.1 cm |
+| outer strike miss (U/L) | 16.1/11.2 → 9.2/5.0 cm | 18.8/15.6 → 2.6/5.1 cm |
+| largest \|I\| per turn | 215 → 396 kA | 91 → 263 kA |
+
+**Moving the X-points with δ gives almost the whole requested change.** A 0.05 request now gives
+0.044–0.048, against 0.010–0.016 with the X-points pinned. κ still does not move.
+
+**δ still falls short of the request in absolute terms** (0.611 for 0.65, 0.568 for 0.60, OFT), but by
+a similar amount in both, so the *change* comes through.
+
+**The inner strike points stay 7–8 cm off in both D and E.** Their targets were set for an X-point at
+3.90 m, so they no longer match either new X-point position.
+
+**The outer legs swing with δ.** At δ 0.65 (D) the outer strike points move up the outer wall, 16–19 cm
+from target. At δ 0.60 (E) they land within 3–5 cm.
+
+**Coils:** CS3 goes +91 → +262 kA per turn, CS2 −15 → −175, PF1 −7 → −95; PF3–PF5 barely change.
+The same non-uniqueness as in Experiment 1 applies (I did not rerun the cancellation check for D→E),
+so these are not yet the "cost" of δ. One observation: each moved-X-point case needs less peak current
+than its pinned counterpart (D 91 vs A 215 kA, E 263 vs B 396 kA per turn).
+
 ### Coil bounds and units (checked)
 
 **Units.** TokaMaker's coil currents and `set_coil_bounds` are both in **A per turn**.
@@ -132,7 +167,8 @@ PF4) and 169 (PF5). The notebook comment says "100 turns", which is wrong.
 
 2. **To test whether the coils can change δ, the X-points have to move with it.** Changing δ while
    holding the X-points fixed mostly tests how the solver resolves a conflict. It does not test what
-   the coils can do.
+   the coils can do. Experiment 3 supports this: moving the X-points with δ turns a 0.05 request into a
+   0.044–0.048 change instead of 0.010–0.016.
 
 3. **Coil currents from this setup are not unique.** Several coil combinations produce almost the
    same field at the plasma. The weak regularization (0.01) doesn't pick one firmly. So the A→B coil
@@ -182,8 +218,9 @@ strike points are outputs.** Requesting them doesn't guarantee them.
 
 1. **Should δ and the X-points move together?** With the primary X-points pinned at R = 3.9 m (weight
    100) and trimming removing the shape points near the corners, requested δ barely matters
-   (0.65 → 0.60 gives 0.587 → 0.577). For a δ scan, should I move the primary X-points with δ (e.g.
-   from `xpoints_from_moments`), or treat X-point position itself as the variable instead of δ?
+   (0.65 → 0.60 gives 0.587 → 0.577). Moving the X-points with δ (Experiment 3) recovers almost the
+   full change. For a δ scan, should the X-point (and the inner strike targets) move with δ like this,
+   or should X-point position itself be the variable instead of δ?
 
 2. **How should the coil currents be regularized?** The A→B coil change (CS3 −134 → +396 kA per turn)
    is almost invisible at the plasma boundary: it changes the flux along the targets by only 3 % of the
@@ -203,6 +240,7 @@ See [README.md](README.md). In short, from the repo root:
 
 ```
 .venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/run_equilibria.py
+.venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/compare_delta_with_xpoints_moved.py
 .venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/check_coil_cancellation.py
 .venv/bin/python studies/arc_v3a_triangularity_and_secondary_xpoint/code/build_picture_guide.py
 ```
