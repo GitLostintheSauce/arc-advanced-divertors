@@ -15,4 +15,5 @@ Scratch output (flux arrays, logs, downloaded inputs) goes to `work/<study name>
 | Study | What it asks |
 |---|---|
 | [arc_v3a_triangularity_and_secondary_xpoint](arc_v3a_triangularity_and_secondary_xpoint/README.md) | Can ARC V3A's coils change triangularity, or move a secondary X-point, while holding the other divertor targets fixed? |
+| [arc_v3a_torax_flattop_vs_geqdsk](arc_v3a_torax_flattop_vs_geqdsk/README.md) | How does the ARC V3A TokaMaker+TORAX flattop compare with the public ARC V3A gEQDSK: shape, profiles, X-points and divertor nulls? |
 | [sparc_current_pressure_and_shape](sparc_current_pressure_and_shape/README.md) | How does a SPARC equilibrium respond when plasma current, pressure, X-point position or elongation changes, one at a time? |

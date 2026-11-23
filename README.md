@@ -22,6 +22,7 @@ Reusable tools (for example divertor metrics or coil-limit checks that another t
 | Study | What it asks |
 |---|---|
 | [ARC V3A: triangularity and secondary X-point](studies/arc_v3a_triangularity_and_secondary_xpoint/README.md) | Can the coils change triangularity, or move a secondary X-point, while holding the other divertor targets? Includes a [report](studies/arc_v3a_triangularity_and_secondary_xpoint/REPORT.md) and an interactive [picture guide](studies/arc_v3a_triangularity_and_secondary_xpoint/picture_guide.html) |
+| [ARC V3A: TokaMaker+TORAX flattop vs gEQDSK](studies/arc_v3a_torax_flattop_vs_geqdsk/README.md) | How close is the coupled TokaMaker+TORAX flattop to the public ARC V3A reference equilibrium? Includes a [report](studies/arc_v3a_torax_flattop_vs_geqdsk/REPORT.md). Needs TORAX 1.4.3 (study-only environment) |
 | [SPARC: current, pressure and shape](studies/sparc_current_pressure_and_shape/README.md) | How does a SPARC equilibrium respond when plasma current, pressure, X-point position or elongation changes one at a time? Includes a [report](studies/sparc_current_pressure_and_shape/REPORT.md) and a [secondary-null follow-up](studies/sparc_current_pressure_and_shape/SECONDARY_NULLS_REPORT.md) |
 
 ## Data
@@ -30,7 +31,7 @@ ARC V3A inputs come from the public Zenodo record [19498373](https://zenodo.org/
 
 ## Setup
 
-Python 3.11+ is needed (TORAX 1.3.1). The environment was built with Python 3.12.13 on macOS arm64.
+Python 3.11+ is needed (TORAX 1.4.0). The environment was built with Python 3.12.13 on macOS arm64.
 
 ```bash
 python3.12 -m venv .venv
