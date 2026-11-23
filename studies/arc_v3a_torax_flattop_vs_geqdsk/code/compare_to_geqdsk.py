@@ -1,6 +1,8 @@
-"""Compare the TokaMaker+TORAX ARC V3A flattop with the public ARC V3A gEQDSK.
+"""Compare the TokaMaker+TORAX ARC V3A flattop runs with the public ARC V3A gEQDSK.
 
-Both equilibria are read as gEQDSK files (the TM+TX one is written by run_flattop.py on the same
+Cases: the public gEQDSK ('ref'), the TM+TX flattop as published ('tmtx') and, if it has been run,
+the TM+TX flattop with secondary X-point targets ('tmtx_sec'; run_flattop.py --case
+secondary_xpoints). All equilibria are read as gEQDSK files (the TM+TX one is written by run_flattop.py on the same
 129 x 129 grid as the Zenodo file) and measured by the SAME functions below, so differences come
 from the equilibria, not from the measuring:
 
@@ -37,9 +39,8 @@ REPO = os.path.dirname(os.path.dirname(STUDY))
 RES = os.path.join(STUDY, 'results')
 FIG = os.path.join(STUDY, 'figures')
 SCRATCH = os.path.join(REPO, 'work', 'arc_v3a_torax_flattop_vs_geqdsk')
-EXTRACT = os.path.join(SCRATCH, 'run', 'extract')
-TMTX_EQDSK = os.path.join(EXTRACT, 'tmtx_flattop_final.geqdsk')
-TMTX_JSON = os.path.join(EXTRACT, 'tmtx_flattop.json')
+RUNS = {'tmtx': os.path.join(SCRATCH, 'run', 'extract'),
+        'tmtx_sec': os.path.join(SCRATCH, 'run_secondary_xpoints', 'extract')}
 REF_EQDSK = os.path.join(SCRATCH, 'inputs', 'geqdsk-ARCv3a')
 REF_URL = 'https://zenodo.org/records/19498373/files/geqdsk-ARCv3a'
 REF_SHA256 = None   # filled on first download; see fetch_reference()
@@ -47,8 +48,12 @@ REF_SHA256 = None   # filled on first download; see fetch_reference()
 MU0 = 4e-7*np.pi
 R0_DEVICE = 4.62
 INK, INK2, GRID = '#0b0b0b', '#52514e', '#e4e3df'
-C_REF, C_TMTX = '#2a78d6', '#eb6834'     # gEQDSK, TM+TX
-LABEL = {'ref': 'gEQDSK (Zenodo, FreeGS)', 'tmtx': 'TokaMaker+TORAX flattop'}
+COLOR = {'ref': '#2a78d6', 'tmtx': '#eb6834', 'tmtx_sec': '#1baf7a'}
+STYLE = {'ref': '-', 'tmtx': '--', 'tmtx_sec': ':'}
+LABEL = {'ref': 'gEQDSK (Zenodo, FreeGS)', 'tmtx': 'TM+TX flattop (as published)',
+         'tmtx_sec': 'TM+TX flattop + secondary X-point targets'}
+SHORT = {'ref': 'gEQDSK', 'tmtx': 'TM+TX', 'tmtx_sec': 'TM+TX + secondary X-pts'}
+COIL_LIMIT_MAT = 50.0    # MA-turns: the coil bounds set in the TM+TX notebook (+/- 50 MA-turns per coil)
 
 
 def fetch_reference():
@@ -212,39 +217,59 @@ def fmt(v, f='{:.3f}'):
     return '—' if v is None else f.format(v)
 
 
+def coil_turns():
+    """Turn count per coil from the public ARC V3A mesh the TM+TX run used."""
+    from OpenFUSIONToolkit.TokaMaker.meshing import load_gs_mesh
+    mesh = os.path.join(SCRATCH, 'run', 'ARC_V3A_mesh.h5')
+    _, _, _, coil_dict, _ = load_gs_mesh(mesh)
+    return {k: v['nturns'] for k, v in coil_dict.items()}
+
+
 def main():
     os.makedirs(RES, exist_ok=True)
     os.makedirs(FIG, exist_ok=True)
     ref_sha = fetch_reference()
-    ref, tm = load(REF_EQDSK), load(TMTX_EQDSK)
-    with open(TMTX_JSON) as fh:
-        tj = json.load(fh)
-    M = {}
-    M['ref'], lc_ref = measure(ref)
-    M['tmtx'], lc_tm = measure(tm)
-    st = tj['tm_stats']
-    tx = tj['tx_scalars']
-    state = tj['tmtx_state']
-    last = lambda k: (state.get(k) or [None])[-1] if isinstance(state.get(k), list) else None
+    E, J, M, LC = {}, {}, {}, {}
+    E['ref'] = load(REF_EQDSK)
+    for key, d in RUNS.items():
+        if os.path.exists(os.path.join(d, 'tmtx_flattop.json')):
+            E[key] = load(os.path.join(d, 'tmtx_flattop_final.geqdsk'))
+            with open(os.path.join(d, 'tmtx_flattop.json')) as fh:
+                J[key] = json.load(fh)
+    cases = [k for k in ('ref', 'tmtx', 'tmtx_sec') if k in E]
+    for k in cases:
+        M[k], LC[k] = measure(E[k])
 
-    # Cross-check of the measuring functions against TokaMaker's own numbers for the TM+TX equilibrium
-    check = {
-        'kappa': (M['tmtx']['kappa'], st['kappa']), 'q95': (M['tmtx']['q95'], abs(st['q_95'])),
-        'l_i': (M['tmtx']['l_i'], st['l_i']), 'beta_p': (M['tmtx']['beta_p'], st['beta_pol']/100),
-        'beta_N': (M['tmtx']['beta_N'], st.get('beta_n')), 'volume_m3': (M['tmtx']['volume_m3'], st['vol']),
-        'Ip_MA (boundary integral vs header)': (M['tmtx']['Ip_from_boundary_MA'], M['tmtx']['Ip_MA']),
-    }
-    tmtx_context = {
-        'Q_fusion': tx.get('Q_fusion'), 'P_fusion_MW': (tx.get('P_fusion') or 0)/1e6 if tx.get('P_fusion') else None,
-        'H98': tx.get('H98'), 'tau_E_s': tx.get('tau_E'), 'beta_N_torax': tx.get('beta_N'),
-        'li3_torax': tx.get('li3'), 'Ip_torax_MA': (tx.get('Ip') or 0)/1e6 if tx.get('Ip') else None,
-        'q95_torax': tx.get('q95'),
-        'TM_vs_TX_final_tm_time': {k: last(k) for k in ('Ip_tm', 'Ip_tx', 'l_i_tm', 'l_i_tx', 'beta_N_tm',
-                                                         'beta_N_tx', 'q95', 'q95_tm', 'pax_tm', 'vloop_tm', 'vloop_tx')},
-    }
-    out = {'reference_geqdsk': {'source': REF_URL, 'sha256': ref_sha, 'header': str(ref.get('case', ''))},
-           'tmtx_notebook_commit': tj.get('notebook_commit'),
-           'measured': M, 'measuring_check_vs_tokamaker_get_stats': check, 'tmtx_context': tmtx_context}
+    # Check the measuring functions against TokaMaker's own numbers, for each TM+TX run
+    checks = {}
+    for k in cases[1:]:
+        st = J[k]['tm_stats']
+        checks[k] = {
+            'kappa': (M[k]['kappa'], st['kappa']), 'q95': (M[k]['q95'], abs(st['q_95'])),
+            'l_i': (M[k]['l_i'], st['l_i']), 'beta_p': (M[k]['beta_p'], st['beta_pol']/100),
+            'beta_N': (M[k]['beta_N'], st.get('beta_n')), 'volume_m3': (M[k]['volume_m3'], st['vol']),
+            'Ip_MA (boundary integral vs header)': (M[k]['Ip_from_boundary_MA'], M[k]['Ip_MA'])}
+
+    # TM+TX run context and coil currents
+    turns = coil_turns()
+    context, coils = {}, {}
+    for k in cases[1:]:
+        tx, state = J[k]['tx_scalars'], J[k]['tmtx_state']
+        last = lambda name: (state.get(name) or [None])[-1] if isinstance(state.get(name), list) else None
+        context[k] = {'Q_fusion': tx.get('Q_fusion'),
+                      'P_fusion_MW': tx['P_fusion']/1e6 if tx.get('P_fusion') is not None else None,
+                      'H98': tx.get('H98'), 'beta_N_torax': tx.get('beta_N'), 'q95_torax': tx.get('q95'),
+                      'li3_torax': tx.get('li3'),
+                      'l_i_tm (last time)': last('l_i_tm'), 'l_i_tx (last time)': last('l_i_tx'),
+                      'beta_N_tm (last time)': last('beta_N_tm'), 'beta_N_tx (last time)': last('beta_N_tx'),
+                      'Ip_tm_MA (last time)': (last('Ip_tm') or 0)/1e6, 'Ip_tx_MA (last time)': (last('Ip_tx') or 0)/1e6}
+        coils[k] = {c: J[k]['tm_coil_I_per_turn'][c]*turns[c]/1e6 for c in J[k]['tm_coil_I_per_turn']}
+
+    out = {'reference_geqdsk': {'source': REF_URL, 'sha256': ref_sha, 'header': str(E['ref'].get('case', ''))},
+           'tmtx_notebook_commit': J['tmtx'].get('notebook_commit') if 'tmtx' in J else None,
+           'cases': {k: LABEL[k] for k in cases}, 'measured': M,
+           'measuring_check_vs_tokamaker_get_stats': checks, 'tmtx_context': context,
+           'coil_currents_MAturns': coils, 'coil_limit_MAturns': COIL_LIMIT_MAT}
     with open(os.path.join(RES, 'comparison.json'), 'w') as fh:
         json.dump(out, fh, indent=1, default=float)
 
@@ -252,117 +277,155 @@ def main():
     rows = [('Plasma current Ip [MA]', 'Ip_MA', '{:.2f}'), ('Vacuum field at R = 4.62 m [T]', 'B0_at_4.62m_T', '{:.2f}'),
             ('Magnetic axis R [m]', 'R_axis', '{:.3f}'), ('Geometric centre R_geo [m]', 'R_geo', '{:.3f}'),
             ('Minor radius a [m]', 'a', '{:.3f}'), ('Elongation κ', 'kappa', '{:.3f}'),
-            ('Triangularity δ (mean, from boundary)', 'delta', '{:.3f}'), ('δ upper / lower', None, None),
+            ('Triangularity δ (mean, from boundary)', 'delta', '{:.3f}'),
             ('Triangularity δ (from X-points: (R_geo − R_x)/a)', 'delta_from_xpoints', '{:.3f}'),
             ('Plasma volume [m³]', 'volume_m3', '{:.1f}'), ('q0', 'q0', '{:.2f}'), ('q95', 'q95', '{:.2f}'),
-            ('Axis pressure [MPa]', 'p_axis_MPa', '{:.2f}'), ('Volume-average pressure [MPa]', None, None),
+            ('Axis pressure [MPa]', 'p_axis_MPa', '{:.2f}'), ('Volume-average pressure [MPa]', 'p_vol_avg_MPa', '{:.3f}'),
             ('β_N', 'beta_N', '{:.2f}'), ('β_p', 'beta_p', '{:.3f}'), ('l_i', 'l_i', '{:.3f}'),
-            ('Upper X-point (R, Z) [m]', None, None), ('Lower X-point (R, Z) [m]', None, None),
-            ('Outer-divertor null near (5.0, ±3.7) m', None, None),
             ('Poloidal flux axis→boundary [Wb/rad]', 'psi_axis_to_boundary_Wb_per_rad', '{:.2f}')]
-    L = ['| Quantity | gEQDSK (Zenodo) | TokaMaker+TORAX | Difference |', '|---|---|---|---|']
+    for k in cases:
+        M[k]['p_vol_avg_MPa'] = M[k]['p_vol_avg_Pa']/1e6
+    head = '| Quantity | ' + ' | '.join(SHORT[k] for k in cases) + ' |'
+    L = ['Columns: ' + '; '.join(f'**{SHORT[k]}** = {LABEL[k]}' for k in cases) + '. '
+         'Percentages are differences from the gEQDSK.', '', head, '|---|' + '---|'*len(cases)]
     for name, key, f in rows:
-        r, t = M['ref'], M['tmtx']
-        if key:
-            d = t[key] - r[key]
-            rel = f' ({100*d/r[key]:+.0f} %)' if r[key] else ''
-            L.append(f'| {name} | {f.format(r[key])} | {f.format(t[key])} | {f.format(d) if f.startswith("{:.") else d}{rel} |')
-        elif name.startswith('δ upper'):
-            L.append(f"| {name} | {r['deltaU']:.3f} / {r['deltaL']:.3f} | {t['deltaU']:.3f} / {t['deltaL']:.3f} | |")
-        elif name.startswith('Volume-average'):
-            L.append(f"| {name} | {r['p_vol_avg_Pa']/1e6:.3f} | {t['p_vol_avg_Pa']/1e6:.3f} | "
-                     f"{(t['p_vol_avg_Pa']-r['p_vol_avg_Pa'])/1e6:+.3f} ({100*(t['p_vol_avg_Pa']/r['p_vol_avg_Pa']-1):+.0f} %) |")
-        elif name.startswith('Outer-divertor null'):
-            def sn(m):
-                parts = []
-                for x in m['secondary_nulls']:
-                    parts.append(f"({x['R']:.2f}, {x['Z']:+.2f}) ψ̂={x['psi_n']:.3f}" if x['is_null']
-                                 else f"none (min B_p {1e3*x['Bp_T']:.0f} mT)")
-                return '; '.join(parts)
-            L.append(f"| {name} | {sn(r)} | {sn(t)} | |")
-        elif 'X-point' in name:
-            i = 0 if name.startswith('Upper') else 1
-            xr, xt = r['x_points'][i], t['x_points'][i]
-            L.append(f"| {name}, ψ̂ there | ({xr['R']:.3f}, {xr['Z']:+.3f}), {xr['psi_n']:.3f} | "
-                     f"({xt['R']:.3f}, {xt['Z']:+.3f}), {xt['psi_n']:.3f} | "
-                     f"{100*np.hypot(xt['R']-xr['R'], xt['Z']-xr['Z']):.1f} cm apart |")
-    L += ['', 'Check of the measuring code against TokaMaker\'s own `get_stats()` for the TM+TX equilibrium:', '',
-          '| Quantity | Measured here | TokaMaker | Relative difference |', '|---|---|---|---|']
-    for k, (a, b) in check.items():
-        L.append(f'| {k} | {fmt(a)} | {fmt(b)} | {fmt(None if (a is None or not b) else 100*(a/b-1), "{:+.1f} %")} |')
-    L += ['', 'TokaMaker+TORAX run context (final state):', '', '| Quantity | Value |', '|---|---|']
-    for k, v in tmtx_context.items():
-        if k == 'TM_vs_TX_final_tm_time':
-            for kk, vv in v.items():
-                L.append(f'| {kk} (last TokaMaker time) | {fmt(vv, "{:.4g}")} |')
-        else:
-            L.append(f'| {k} | {fmt(v, "{:.4g}")} |')
+        cells = []
+        for k in cases:
+            v = M[k][key]
+            if k == 'ref' or not M['ref'][key]:
+                cells.append(f.format(v))
+            else:
+                cells.append(f"{f.format(v)} ({100*(v/M['ref'][key]-1):+.0f} %)")
+        L.append(f'| {name} | ' + ' | '.join(cells) + ' |')
+    L.append('| δ upper / lower (from boundary) | ' + ' | '.join(
+        f"{M[k]['deltaU']:.3f} / {M[k]['deltaL']:.3f}" for k in cases) + ' |')
+    for i, nm in enumerate(('Upper', 'Lower')):
+        L.append(f'| {nm} main X-point (R, Z) [m], ψ̂ there | ' + ' | '.join(
+            f"({M[k]['x_points'][i]['R']:.3f}, {M[k]['x_points'][i]['Z']:+.3f}), {M[k]['x_points'][i]['psi_n']:.3f}"
+            for k in cases) + ' |')
+
+    def sn(x):
+        if x['is_null']:
+            return f"({x['R']:.2f}, {x['Z']:+.2f}), ψ̂ = {x['psi_n']:.3f}"
+        return f"none (min B_p {1e3*x['Bp_T']:.0f} mT)"
+    for i, nm in enumerate(('Upper', 'Lower')):
+        L.append(f'| {nm} outer-divertor null near (5.0, ±3.7) m | ' + ' | '.join(
+            sn(M[k]['secondary_nulls'][i]) for k in cases) + ' |')
+
+    L += ['', "Check of the measuring code against TokaMaker's own `get_stats()` for each TM+TX run:", '',
+          '| Quantity | ' + ' | '.join(f'{SHORT[k]}: here / TokaMaker' for k in cases[1:]) + ' |',
+          '|---|' + '---|'*len(cases[1:])]
+    for q in (checks[cases[1]] if len(cases) > 1 else {}):
+        L.append(f'| {q} | ' + ' | '.join(
+            f"{fmt(checks[k][q][0])} / {fmt(checks[k][q][1])}" for k in cases[1:]) + ' |')
+    L += ['', 'TM+TX run results (end of the coupled run):', '',
+          '| Quantity | ' + ' | '.join(SHORT[k] for k in cases[1:]) + ' |', '|---|' + '---|'*len(cases[1:])]
+    for q in (context[cases[1]] if len(cases) > 1 else {}):
+        L.append(f'| {q} | ' + ' | '.join(fmt(context[k][q], '{:.4g}') for k in cases[1:]) + ' |')
+    if len(cases) > 1:
+        L += ['', f'Coil currents [MA-turns]. The TM+TX notebook bounds every coil at ±{COIL_LIMIT_MAT:.0f} MA-turns.', '',
+              '| Coil | ' + ' | '.join(SHORT[k] for k in cases[1:]) + (' | Change |' if 'tmtx_sec' in coils else ' |'),
+              '|---|' + '---|'*len(cases[1:]) + ('---|' if 'tmtx_sec' in coils else '')]
+        for c in coils[cases[1]]:
+            vals = [coils[k][c] for k in cases[1:]]
+            row = f'| {c} | ' + ' | '.join(f'{v:+.2f}' + (' **at limit**' if abs(v) > 0.99*COIL_LIMIT_MAT else '')
+                                         for v in vals)
+            if 'tmtx_sec' in coils:
+                row += f" | {coils['tmtx_sec'][c] - coils['tmtx'][c]:+.2f}"
+            L.append(row + ' |')
+        L.append('| Σ\\|I\\| | ' + ' | '.join(f'{sum(abs(v) for v in coils[k].values()):.1f}' for k in cases[1:]) +
+                 (' | |' if 'tmtx_sec' in coils else ' |'))
     with open(os.path.join(RES, 'comparison_table.md'), 'w') as fh:
         fh.write('\n'.join(L) + '\n')
 
     # ---------------- figures ----------------
     def style(ax):
-        for s in ('top', 'right'):
-            ax.spines[s].set_visible(False)
+        for side in ('top', 'right'):
+            ax.spines[side].set_visible(False)
         ax.grid(color=GRID, lw=0.6)
         ax.set_axisbelow(True)
 
-    # 1) boundary and separatrix overlay
     fig, axes = plt.subplots(1, 2, figsize=(12, 8), gridspec_kw={'width_ratios': [1, 1.1]})
     for ax, (xl, yl, title) in zip(axes, [((2.4, 7.0), (-5.0, 5.0), 'Full view'),
                                           ((3.2, 5.6), (1.4, 4.4), 'Upper divertor (zoom)')]):
-        lim = ref['rzlim']
+        lim = E['ref']['rzlim']
         ax.plot(lim[:, 0], lim[:, 1], color=INK2, lw=1.2, label='limiter (from gEQDSK)')
-        for key, e, lc, c, ls in (('ref', ref, lc_ref, C_REF, '-'), ('tmtx', tm, lc_tm, C_TMTX, '--')):
-            for i, seg in enumerate(separatrix_pieces(e)):
-                ax.plot(seg[:, 0], seg[:, 1], color=c, ls=ls, lw=1.8, label=f'{LABEL[key]} ψ̂ = 1' if i == 0 else None)
-            for xp in M[key]['x_points']:
-                ax.plot(xp['R'], xp['Z'], 'x', color=c, ms=10, mew=2.5)
-            ax.plot(e['raxis'], e['zaxis'], '+', color=c, ms=12, mew=2)
+        for k in cases:
+            for i, seg in enumerate(separatrix_pieces(E[k])):
+                ax.plot(seg[:, 0], seg[:, 1], color=COLOR[k], ls=STYLE[k], lw=1.8,
+                        label=f'{LABEL[k]}, ψ̂ = 1' if i == 0 else None)
+            for xp in M[k]['x_points']:
+                ax.plot(xp['R'], xp['Z'], 'x', color=COLOR[k], ms=10, mew=2.5)
+            for xp in M[k]['secondary_nulls']:
+                if xp['is_null']:
+                    ax.plot(xp['R'], xp['Z'], 'o', mfc='none', mec=COLOR[k], ms=10, mew=2)
+        if 'tmtx_sec' in cases:
+            from run_flattop import SECONDARY_X_POINTS
+            sx = np.array(SECONDARY_X_POINTS)
+            ax.plot(sx[:, 0], sx[:, 1], '+', color=INK, ms=14, mew=1.5,
+                    label='secondary X-point targets' if ax is axes[0] else None)
         ax.set_xlim(*xl); ax.set_ylim(*yl); ax.set_aspect('equal')
         ax.set_xlabel('R [m]'); ax.set_ylabel('Z [m]'); ax.set_title(title, fontsize=10)
         style(ax)
     axes[0].legend(fontsize=8, frameon=False, loc='lower left')
-    fig.suptitle('ARC V3A: TokaMaker+TORAX flattop vs public gEQDSK (× X-points, + magnetic axis)', fontsize=11)
+    fig.suptitle('ARC V3A separatrix: × main X-points, ○ outer-divertor nulls found', fontsize=11)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, 'separatrix_tmtx_vs_geqdsk.png'), dpi=140)
     plt.close(fig)
 
-    # 2) profiles vs normalized poloidal flux, one quantity per panel
     fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex=True)
     panels = [('pres', 1e-6, 'Pressure p [MPa]'), ('qpsi', 1.0, 'Safety factor q'),
               ('ffprim', 1.0, "FF′ [T² m² / (Wb/rad)]"), ('pprime', 1e-6, "p′ [MPa / (Wb/rad)]")]
-    for ax, (k, s, lab) in zip(axes.flat, panels):
-        for key, e, c, ls in (('ref', ref, C_REF, '-'), ('tmtx', tm, C_TMTX, '--')):
-            y = np.abs(np.asarray(e[k]))*s
-            ax.plot(e['psi_1d'], y, color=c, ls=ls, lw=2, label=LABEL[key])
+    for ax, (k2, sc, lab) in zip(axes.flat, panels):
+        for k in cases:
+            ax.plot(E[k]['psi_1d'], np.abs(np.asarray(E[k][k2]))*sc, color=COLOR[k], ls=STYLE[k], lw=2, label=LABEL[k])
         ax.set_ylabel(lab); style(ax)
     for ax in axes[1]:
         ax.set_xlabel('Normalized poloidal flux ψ̂ (0 = axis, 1 = boundary)')
     axes[0, 0].legend(frameon=False, fontsize=9)
-    fig.suptitle('Profiles vs normalized poloidal flux (magnitudes; the two files use different sign conventions)', fontsize=10)
+    fig.suptitle('Profiles vs normalized poloidal flux (magnitudes; the files use different sign conventions)', fontsize=10)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, 'profiles_tmtx_vs_geqdsk.png'), dpi=140)
     plt.close(fig)
 
-    # 3) TORAX kinetic profiles (no gEQDSK equivalent: a gEQDSK stores only total pressure)
-    prof = tj['tx_profiles']
-    fig, axes = plt.subplots(1, 3, figsize=(13, 3.8))
-    for ax, names, lab, s in ((axes[0], ['n_e'], r'$n_e$ [$10^{20}$ m$^{-3}$]', 1e-20),
-                              (axes[1], ['T_e', 'T_i'], 'T [keV]', 1.0),
-                              (axes[2], ['j_total', 'j_bootstrap', 'j_ohmic'], 'j [MA/m²]', 1e-6)):
-        for n, c in zip(names, [C_TMTX, '#1baf7a', '#6250d6']):
-            p = prof.get(n, {})
+    # TORAX kinetic profiles, one panel per quantity, one line per TM+TX run
+    fig, axes = plt.subplots(1, 4, figsize=(16, 3.8))
+    for ax, (n, lab, sc) in zip(axes, (('n_e', r'$n_e$ [$10^{20}$ m$^{-3}$]', 1e-20), ('T_e', r'$T_e$ [keV]', 1.0),
+                                       ('T_i', r'$T_i$ [keV]', 1.0), ('j_total', r'$j_{total}$ [MA/m²]', 1e-6))):
+        for k in cases[1:]:
+            p = J[k]['tx_profiles'].get(n, {})
             if 'x' in p:
-                ax.plot(p['x'], np.asarray(p['y'], dtype=float)*s, color=c, lw=2, label=n)
+                ax.plot(p['x'], np.asarray(p['y'], dtype=float)*sc, color=COLOR[k], ls=STYLE[k], lw=2, label=SHORT[k])
         ax.set_xlabel('ρ (normalized toroidal flux radius)'); ax.set_ylabel(lab); style(ax)
-        ax.legend(frameon=False, fontsize=8)
-    fig.suptitle('TORAX final profiles (TokaMaker+TORAX flattop). A gEQDSK has no density or temperature to compare.', fontsize=10)
+    axes[0].legend(frameon=False, fontsize=8)
+    fig.suptitle('TORAX final profiles. A gEQDSK has no density or temperature to compare.', fontsize=10)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, 'torax_final_profiles.png'), dpi=140)
     plt.close(fig)
+
+    if len(coils) == 2:
+        names = list(coils['tmtx'])
+        x = np.arange(len(names))
+        fig, ax = plt.subplots(figsize=(13, 4.5))
+        for i, k in enumerate(('tmtx', 'tmtx_sec')):
+            ax.bar(x + (i - 0.5)*0.38, [coils[k][c] for c in names], width=0.36, color=COLOR[k], label=LABEL[k],
+                   edgecolor='white', linewidth=0.6)
+        for y in (COIL_LIMIT_MAT, -COIL_LIMIT_MAT):
+            ax.axhline(y, color=INK2, ls='--', lw=1)
+        ax.text(len(names) - 0.5, COIL_LIMIT_MAT, 'notebook coil limit ±50 MA-turns', ha='right', va='bottom',
+                fontsize=8, color=INK2)
+        ax.axhline(0, color=INK2, lw=0.8)
+        ax.set_xticks(x); ax.set_xticklabels(names)
+        ax.set_ylabel('Coil current [MA-turns]'); style(ax)
+        ax.legend(frameon=False, fontsize=9, loc='lower right')
+        ax.set_title('Coil currents at the end of the coupled run', fontsize=10)
+        fig.tight_layout()
+        fig.savefig(os.path.join(FIG, 'coil_currents_tmtx_cases.png'), dpi=140)
+        plt.close(fig)
     print('\n'.join(L))
 
 
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, HERE)
     main()
