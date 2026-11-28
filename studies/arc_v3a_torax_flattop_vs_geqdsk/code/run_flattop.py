@@ -170,6 +170,17 @@ def sha256(path):
         return hashlib.sha256(fh.read()).hexdigest()
 
 
+def apply_patches(nb, patches):
+    """Apply (marker, old, new) patches to the notebook; fail if a marker or old text is not found."""
+    for marker, old, new in patches:
+        cells = [c for c in nb.cells if c.cell_type == 'code' and marker in c.source]
+        if len(cells) != 1:
+            raise RuntimeError(f'patch marker {marker!r} matched {len(cells)} cells')
+        if old is not None and old not in cells[0].source:
+            raise RuntimeError(f'patch text not found in the cell marked {marker!r}')
+        cells[0].source = new if old is None else cells[0].source.replace(old, new)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--oft-root', default=os.path.expanduser('~/Documents/code/OpenFUSIONToolkit'))
@@ -193,11 +204,7 @@ def main():
         raise RuntimeError(f'{mesh} does not match the public ARC V3A mesh')
 
     nb = nbformat.read(nb_path, as_version=4)
-    for marker, old, new in PATCHES + (SECONDARY_PATCHES if args.case == 'secondary_xpoints' else []):
-        cells = [c for c in nb.cells if c.cell_type == 'code' and marker in c.source]
-        if len(cells) != 1:
-            raise RuntimeError(f'patch marker {marker!r} matched {len(cells)} cells')
-        cells[0].source = new if old is None else cells[0].source.replace(old, new)
+    apply_patches(nb, PATCHES + (SECONDARY_PATCHES if args.case == 'secondary_xpoints' else []))
     # Insert the extraction cell right after Section 1.10 (before the Section 2 sweeps).
     i_sweeps = next(i for i, c in enumerate(nb.cells) if c.cell_type == 'markdown' and c.source.startswith('# 2 Sweeps'))
     nb.cells.insert(i_sweeps, nbformat.v4.new_code_cell(EXTRACT_CELL))
